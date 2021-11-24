@@ -12,6 +12,7 @@ void setup() {
   ring1.begin(); 
 }
 
+
 void loop() {
     // donner une couleur à certains pixels en RGB (max = 255)
     // 0 -> rouge

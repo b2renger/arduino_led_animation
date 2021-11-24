@@ -80,7 +80,131 @@ void loop() {
 Vous devriez alors obtenir ce résultat :
 ![](./assets/exemple01.jpg)
 
+Rien que pour 16 leds ce processus est un peu fastidieu; imaginez alors en avoir 32 ou 400 ! et ne parlons même pas des animations potentielles que nous souhaiterions créer ... 
+
 ### Utiliser une boucle pour assigner toutes les leds
+
+En programmation nous pouvons utiliser une **boucle for** pour répéter une action plusieures fois.
+
+Une boucle for s'écrit comme cela :
+
+```c
+for ( /* conditions à remplir */ ){
+  /*
+  code à éxécuter tant que les conditions sont vérifiées
+  */
+}
+```
+
+il est donc important de bien identifier les parenthèses - qui servent à délimiter les conditions d'éxécution du code, qui lui est entre accolades.
+
+D'un point de vue pratique, les conditions vont être exprimée en 3 étapes :
+
+- on va créer une variable (ici un nombre entier) et on va lui donner une valeur de démarrage :
+  ```
+  int cpt = 0;
+  ```
+  => notre variable s'appelle 'cpt' (pour compteur), et elle vaut zéro au début.
+
+- on exprime ensuite la condition d'arrêt :
+  ```
+  cpt < 30;
+  ```
+  => si jamais i dépasse 29 on s'arrête et on sort de la boucle for; on continuera alors l'éxécution du programme de manière séquentielle (ligne par ligne).
+
+- finalement on définit la manière dont notre compteur évolue après chaque éxécution du code entre accolades, par exemple :
+  ```
+  cpt = cpt + 5;
+  ```
+  => à chaque fois que le code est éxécuté on augmente notre variable cpt de 5.
+
+Du coup, en écrivant : 
+  ```c
+  for (int cpt = 0 ; cpt < 30 ; cpt = cpt +5){
+
+  }
+  ```
+Le code entre les accolades, sera éxécuté :
+  - un première fois avec cpt valant 0
+  - une deuxième fois avec cpt valant 5
+  - etc
+  - un cinquième fois avec cpt valant 25
+
+A la sixième fois *cpt* vaudra 30 et ne sera donc plus strictement inférieur à 30. On sortira alors de la boucle pour éxécuter le code directement en dessous.
+
+Si nous appliquons cela à nos leds, cela donne :
+
+```c
+// inclure la bibliothèque nécessaire
+#include <Adafruit_NeoPixel.h>
+
+// initialiser l'anneau de leds avec 16 leds connectés sur la pin 6
+#define NUMPIXELS 16
+
+Adafruit_NeoPixel ring1 = Adafruit_NeoPixel(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);
+// notre anneau est maintenant représenté par l'alias "ring1"
+
+void setup() {
+  // intialiser l'anneau
+  ring1.begin();
+}
+
+void loop() {
+  // on répéte une ligne de code pour chaque led
+  // c'est à dire de la led à l'index 0 jusqu'à la led 15.
+  for (int i = 0 ; i < NUMPIXELS ; i ++) {
+    // pour la led à l'index i, on lui applique la couleur rouge
+    ring1.setPixelColor(i, ring1.Color(255, 0, 0));
+  }
+  ring1.show();
+}
+
+```
+Traditionellement, on utilise *i* car c'est plus court à écrire que *cpt*, mais on peut utiliser n'importe quel lettre ou mot.
+![](./assets/exemple02.jpg)
+
+
+Du coup on peut utiliser la valeur de notre compteur pour créer des dégradés. On peut utiliser la valeur que prend *i* à chaque répétition (dans notre cas elle augmente de 1), pour calculer d'autres nombres que l'on pourra utiliser pour nos composantes rgb.
+
+```c
+// inclure la bibliothèque nécessaire
+#include <Adafruit_NeoPixel.h>
+
+// initialiser l'anneau de leds avec 16 leds connectés sur la pin 6
+#define NUMPIXELS 16
+
+Adafruit_NeoPixel ring1 = Adafruit_NeoPixel(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);
+// notre anneau est maintenant représenté par l'alias "ring1"
+
+void setup() {
+  // intialiser l'anneau
+  ring1.begin();
+}
+
+void loop() {
+  // on répéte une ligne de code pour chaque led
+  // c'est à dire de la led à l'index 0 jusqu'à la led 15.
+  for (int i = 0 ; i < NUMPIXELS ; i ++) {
+    // pour la led à l'index i, on lui applique une couleur
+    // dominante bleue, mais dont la composante rouge augmente
+    // au fur et à mesure jusqu'à 255 et dont la composante
+    // bleue diminue jusqu'à 0
+    // map permet de calculer pour i compris entre 0 et NUMPIXELS
+    // une valeur a comprise entre 0 et 255.
+    int a = map(i, 0, NUMPIXELS, 0, 255);
+    int b = 255 - a;
+    ring1.setPixelColor(i, ring1.Color(a, 0, b));
+  }
+  ring1.show();
+}
+```
+Ici la fonction map permet de faire un calcul qui est une simple règle de proportionalité (ou règle de trois)
+
+On range dans une variable appelée *a*, le résultat du calcul effectué par [*map*](https://www.arduino.cc/reference/en/language/functions/math/map/), puis on utilise cette variable pour la composante rouge de notre calcul.
+On calcule aussi une variable appelée *b* qui sera le "miroir" de *a* par rapport à la valeur max de 255.
+
+![](./assets/exemple02b.jpg)
+
 
 ### Le mode de couleur HSB
 
