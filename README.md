@@ -243,7 +243,7 @@ void loop() {
 }
 ```
 
-![](assets/exemple_03.JPG)
+![](assets/exemple_03.jpg)
 
 Il est aussi possible de faire un dégradé de saturation ou de luminosité. Mais attention obtenir un dégradé qui perceptuellement soit valable il faut utiliser une correction gamma (suivez [ce lien pour en savoir plus](https://learn.adafruit.com/led-tricks-gamma-correction))
 
@@ -277,16 +277,22 @@ void loop() {
 ```
 Sans correction :
 
-![](assets/exemple03_nogamma.JPG)
+![](assets/exemple03_nogamma.jpg)
 
 Avec correction :
 
-![](assets/exemple03_gamma.JPG)
-
-
+![](assets/exemple03_gamma.jpg)
 
 
 ## La bibliothèque Tween
+
+Nous allons maintenant découvrir comment il est possible de construire des animations de leds et des scénario de couleurs.
+
+Il va s'agir de pouvoir exprimer en code la possibilité de passer par exemple d'un bleu à un orange en un certain temps.
+
+Il est possible de tout coder directement, mais pour nous faciliter le travail nous allons utiliser une bibliothèque nommée **Tween**.
+
+
 
 ### Timeline
 
