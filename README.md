@@ -208,6 +208,83 @@ On calcule aussi une variable appelée *b* qui sera le "miroir" de *a* par rappo
 
 ### Le mode de couleur HSB
 
+Le mode RGB a ses limites, il permet de faire beaucoup de choses, mais il existe un autre mode appelé HSB pour : Hue Saturation Brightness. Cela signifie qu'en lieu et place de spécifier les composantes rouges, vertes et bleues, nous pouvons définir des couleur grâce à leur teinte, leur saturation et leur luminosité.
+
+- la teinte est traditionellement exprimée entre 0 et 360 dans les sélécteurs de couleurs que vous pourez trouver en ligne. Ici elle sera exprimée entre 0 et 65535 (soit 2 puissance 16 pour avoir une finisse de sélection 16 bit).
+- la saturation qui représente en réalité l'intensité des couleurs est traditionellement exprimée entre 0 et 100 ici elle sera exprimée entre 0 et 255. Si la saturation est à 0 nous aurons du blanc et si elle est à 255 nous aurons des couleurs pleines - très saturées.
+- la luminosité est aussi traditionnellement exprimée entre 0 et 100 et encore une fois elle sera ici exprimée entre 0 et 255. Si la luminosité est à 0 nous aurons des leds éteintes (noires), si elle est à 255 nous aurons des leds allumées au maximum de leur puissance.
+
+Il est alors très facile de créer un dégradé de teinte en utilisant une boucles for :
+
+```c
+// inclure la bibliothèque nécessaire
+#include <Adafruit_NeoPixel.h>
+
+// initialiser l'anneau de leds avec 16 leds connectés sur la pin 6
+#define NUMPIXELS 16
+
+Adafruit_NeoPixel ring1 = Adafruit_NeoPixel(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);
+// notre anneau est maintenant représenté par l'alias "ring1"
+
+void setup() {
+  // intialiser l'anneau
+  ring1.begin();
+}
+
+void loop() {
+  // on répéte une ligne de code pour chaque led
+  // c'est à dire de la led à l'index 0 jusqu'à la led 15.
+  for (int i = 0 ; i < NUMPIXELS ; i ++) {
+    int teinte = map(i, 0, NUMPIXELS, 0, 65535);
+    uint32_t rgbcolor = ring1.ColorHSV(teinte, 255,255);
+    ring1.setPixelColor(i, rgbcolor);
+  }
+  ring1.show();
+}
+```
+
+![](assets/exemple_03.JPG)
+
+Il est aussi possible de faire un dégradé de saturation ou de luminosité. Mais attention obtenir un dégradé qui perceptuellement soit valable il faut utiliser une correction gamma (suivez [ce lien pour en savoir plus](https://learn.adafruit.com/led-tricks-gamma-correction))
+
+
+```c
+// inclure la bibliothèque nécessaire
+#include <Adafruit_NeoPixel.h>
+
+#define NUMPIXELS 16
+
+// initialiser l'anneau de leds avec 16 leds connectés sur la pin 6
+Adafruit_NeoPixel ring1 = Adafruit_NeoPixel(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);
+// notre anneau est maintenant représenté par l'alias "ring1"
+
+void setup() {
+  // intialiser l'anneau
+  ring1.begin();
+}
+
+void loop() {
+  // on répéte une ligne de code pour chaque led
+  // c'est à dire de la led à l'index 0 jusqu'à la led 15.
+  for (int i = 0 ; i < NUMPIXELS ; i ++) {
+    int sat = map(i, 0, NUMPIXELS, 0, 255);
+    //uint32_t rgbcolor = ring1.ColorHSV(0, sat,255); // sans correction
+    uint32_t rgbcolor = ring1.gamma32(ring1.ColorHSV(0, sat, 255));// avec correction
+    ring1.setPixelColor(i, rgbcolor);
+  }
+  ring1.show();
+}
+```
+Sans correction :
+
+![](assets/exemple03_nogamma.JPG)
+
+Avec correction :
+
+![](assets/exemple03_gamma.JPG)
+
+
+
 
 ## La bibliothèque Tween
 
