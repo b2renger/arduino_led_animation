@@ -613,6 +613,89 @@ void loop() {
 
 ### Noise
 
+Nous allons maintenant nous intéresser à une autre technique, permettant d'obtenir des rendu plus organiques / ondulants.
+
+![](./assets/exemple_05_noise.gif)
+
+L'idée est d'utiliser un algorithme de noise (qui permet d'obtenir des nombres aléatoires cohérents entre eux).
+Pour vous donner une idée de ce que cela peu donner graphiquement, vous pouvez regarder ce tableau pinterest : https://www.pinterest.fr/vigo_spooliga/perlin-noise/
+
+Pour cela nous allons encore importer un nouvelle bibliothèque qui n'est pas non plus disponnible dans le gestionnaire arduino.
+
+Elle se trouve ici : https://github.com/jshaw/SimplexNoise
+
+Comme pour la bibliothèque *Tween* vous pouvez cliquer sur le bouton vert *Code* et choisir *dowload as zip*.
+
+Puis dans arduino vous sélectionnez le menu *Croquis* puis *inclure une bibliothèque* et *ajouter la bibliothèqe .ZIP* pour pouvoir choisir le fichier zip que vous venez de télécharger.
+
+D'un point de vue code, c'est un peu plus compliqué à utiliser ...
+
+Dans l'animation ci-dessus nous controllons une variation de teinte dans des couleurs bleutées et nous controllons aussi la luminosité générale de chacun des pixels.
+
+Le *noise* est un algorithme qui dépend du temps, il va donc falloir lui fournir des variables qui augmentent lentement, plus ces variables augmentent longtemps, plus le résultat sera "souple" visuellement, plus elles augmentent vite plus le résultat sera "sacadé".
+
+```c
+
+#include <Adafruit_NeoPixel.h>
+#include <SimplexNoise.h>
+
+#define PIN        6
+#define NUMPIXELS 16
+Adafruit_NeoPixel ring1(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+// initialiser la bibliothèque pour le noise
+SimplexNoise sn;
+
+double n;
+double x = 0.0;
+
+double ny;
+double y = 0.0;
+
+
+void setup() {
+
+  ring1.begin(); 
+
+  // obtenir des valeurs aléatoires au lancement du programme
+  x= analogRead(0)/10.;
+  y= analogRead(2)/ 10.;
+}
+
+void loop() {
+
+  // on augmente les variables x et y lentement
+  x += 0.005;
+  y += 0.001;
+
+  // on parcourt tous les pixels
+  for (int i = 0; i < NUMPIXELS; i++) {
+
+    // on calcule une valeur de noise (comprise entre 0 et 1)
+    n = sn.noise(x, i); 
+    // on retransforme cette valeur en une valeur comprise entre 0 et 255
+    int br = map(n * 100, -100, 100, 0, 255); 
+
+    // on fait de même avec notre seconde valeur.
+    n = sn.noise(y, i*2);
+    // on retransforme pour avoir des valeurs entre 160 et 270
+    // référentiel de la roue chromatique
+    int h = map(n*100, -100, 100, 160, 270);
+    // on retransforme enfin pour avoir des valeurs entre 0 et 65535
+    // dans le référentiel des anneaux de leds.
+    int h1 = map(h, 0, 360, 0, 65535);
+    
+    ring1.setPixelColor(i, ring1.gamma32(ring1.ColorHSV (h1, 255, br)));
+  }
+  ring1.show();   
+
+
+}
+```
+
+#### Mélanger timeline et animations
+
+
 
 ## Brancher et assigner plusieurs anneaux
 
