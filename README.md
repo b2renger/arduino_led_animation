@@ -374,7 +374,8 @@ void loop() {
     int h1 = map(teinte, 0, 360, 0, 65535);
     // on applique notre teinte à chaque pixel de notre anneau
     // en gardant la saturation et la luminosité au maxium
-    ring1.setPixelColor(i, ring1.ColorHSV (h1, 255, 255));
+    ring1.setPixelColor(i, ring1.gamma32(ring1.ColorHSV (h1, saturation, 255)));
+
   }
   
   ring1.show(); // on n'oublie pas d'afficher les couleurs sur l'anneau
@@ -518,14 +519,97 @@ void loop() {
 }
 
 ```
-
 ![](./assets/exemple_04_rgb.gif)
 
 
-
 ## Programmation avancée
+Nous allons maintenant nous concentrer sur des animations un peu plus complexes qui vont assigner des valeurs différentes à chaque led d'un anneau.
 
 ### Animation radiale
+
+Nous allons réaliser cette animation :
+
+![](./assets/exemple_05_radial.gif)
+
+L'idée est assez simple nous reprenons le principe du dégradé en mode HSB sur l'anneau complet.
+
+Nous allons ensuite créer un décalage (ou *offset*) qui lui va être changé par une timeline.
+
+Il va falloir ensuite que nous attribuons la bonne teinte au bon pixel. Nous allons ajouter le *i* de notre boucle for à notre variable *offset* qui va donc augmenter de 1 entre 0 et le nombre de pixels que nous avons (*NUMPIXELS*).
+
+Il faut cependant que le résultat de *i+offset* reste compris entre 0 et NUMPIXELS. L'astuce pour cela est d'utiliser l'opérateur *modulo* exprimé par le caractère '%' qui calcule le reste de la division euclidienne (explication simple à venir ...)
+
+En gros si je fais un modulo 16 sur une valeur qui augmente de 1 à chaque calcul : j'obtiendrai un compteur qui augmente de 1 à chaque fois et lorsque j'arrive à 16 ou des multiples de 16 le résultat sera toujours zéro :
+
+Si je fais mes divisions :
+- 0 / 16 => cela vaut zéro et le reste vaut 0.
+- 1 / 16 => cela vaut toujours zéro mais le reste vaut 1. 
+- 2 / 16 => toujours zéro mais le reste vaut 2.
+- ...
+- 15 / 16 => toujours zéro mais le reste vaut 15.
+- 16 / 16 => la division vaut 1 et le reste vaut 0.
+- 17 / 16 => 1 et le reste vaut 1.
+- ...
+- 31 / 16 => 1 et le reste vaut 15.
+- 32 / 16 => 2 et le reste vaut 0.
+- etc.
+
+Du coup :
+```
+(i + offset) % NUMPIXELS
+```
+donnera toujours un résultat entre 0 et NUMPIXELS ce qui était notre but.
+
+Du coup notre programme pourra être exprimé comme ceci : 
+
+```c
+#include <Tween.h>
+#include <Adafruit_NeoPixel.h>
+
+// initialisation des leds
+#define PIN        6
+#define NUMPIXELS 16
+Adafruit_NeoPixel ring1(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+Tween::Timeline timeline;
+// on créé une variable qui pemettra de décaler les couleurs
+int offset = 0;
+
+void setup() {
+  Serial.begin(9600);
+  ring1.begin();
+
+  // on créé un timeline qui va agir sur la variable offset
+  // pour la faire changer au cours du temps
+  timeline.mode(Tween::Mode::REPEAT_TL);
+  timeline.add(offset)
+  .init(0)
+  .then(NUMPIXELS, 1000);
+  /* on démarre à 0 on prévoit de faire un tour complet
+     d'anneau en 1 seconde/
+     il est possible d'utiliser d'autres types d'interpolation !
+  */
+  timeline.start();
+}
+
+void loop() {
+
+  timeline.update();
+  // on parcourt les leds comme d'habitude
+  for (int i = 0; i < NUMPIXELS ; i++) {
+    // on calcul notre index grace au modulo
+    int index = (i+offset)%NUMPIXELS
+    // on calcule une variable h1 qui transforme notre index en une valeur
+    // utilisable comme une teinte
+    int h1 = map(index, 0, NUMPIXELS, 0, 65535);
+    // on applique notre teinte à chaque pixel de notre anneau
+    // en gardant la saturation et la luminosité au maxium
+    ring1.setPixelColor(i, ring1.gamma32(ring1.ColorHSV (h1, 255, 255)));
+  }
+  ring1.show();
+}
+```
+
 
 ### Noise
 
