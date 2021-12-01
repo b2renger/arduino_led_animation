@@ -374,7 +374,7 @@ void loop() {
     int h1 = map(teinte, 0, 360, 0, 65535);
     // on applique notre teinte à chaque pixel de notre anneau
     // en gardant la saturation et la luminosité au maxium
-    ring1.setPixelColor(i, ring1.gamma32(ring1.ColorHSV (h1, saturation, 255)));
+    ring1.setPixelColor(i, ring1.gamma32(ring1.ColorHSV (h1, 255, 255)));
 
   }
   
