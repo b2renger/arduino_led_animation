@@ -576,7 +576,7 @@ Tween::Timeline timeline;
 int offset = 0;
 
 void setup() {
-  Serial.begin(9600);
+ 
   ring1.begin();
 
   // on créé un timeline qui va agir sur la variable offset
@@ -646,7 +646,7 @@ Adafruit_NeoPixel ring1(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 // initialiser la bibliothèque pour le noise
 SimplexNoise sn;
 
-double n;
+double nx;
 double x = 0.0;
 
 double ny;
@@ -672,15 +672,15 @@ void loop() {
   for (int i = 0; i < NUMPIXELS; i++) {
 
     // on calcule une valeur de noise (comprise entre 0 et 1)
-    n = sn.noise(x, i); 
+    nx = sn.noise(x, i); 
     // on retransforme cette valeur en une valeur comprise entre 0 et 255
-    int br = map(n * 100, -100, 100, 0, 255); 
+    int br = map(nx * 100, -100, 100, 0, 255); 
 
     // on fait de même avec notre seconde valeur.
-    n = sn.noise(y, i*2);
+    ny = sn.noise(y, i*2);
     // on retransforme pour avoir des valeurs entre 160 et 270
     // référentiel de la roue chromatique
-    int h = map(n*100, -100, 100, 160, 270);
+    int h = map(ny*100, -100, 100, 160, 270);
     // on retransforme enfin pour avoir des valeurs entre 0 et 65535
     // dans le référentiel des anneaux de leds.
     int h1 = map(h, 0, 360, 0, 65535);
@@ -692,16 +692,402 @@ void loop() {
 
 }
 ```
+Ici vous pouvez jouer avec différentes valeurs pour obtenir des rendus différents.
+Par exemple :
+
+- *x += 0.005;* : vous pouvez changer la valeur 0.005 par une valeur plus grande ou plus petite
+- idem pour *y += 0.001;*
+- *nx = sn.noise(x, i);* : essayez de remplacer *i* par *i*5* ou *i*0.25* et d'autre valeurs
+- idem pour *ny = sn.noise(y, i*2);*
+
 
 #### Mélanger timeline et animations
 
+Le dernier exemple avancé va vous permettre de mélanger des éléments liés à la timeline et des animations pixel par pixel.
+Précédement nous avons utilisé *.hold(2000)* pour maintenir un état pendant 2 secondes; il est possible d'utiliser ce temps pour réaliser une autre animation ou donner une configuration manuellement à notre anneau.
+
+Reprenons notre animation en RGB qui passe du bleu au orange
+
+```c
+
+```c
+#include <Tween.h>
+#include <Adafruit_NeoPixel.h>
+
+// initialisation des leds
+#define PIN        6
+#define NUMPIXELS 16
+Adafruit_NeoPixel ring1(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+// initialisation de la timeline
+Tween::Timeline timeline;
+// initialisation de variables qui vont être modifiées
+float red = .0f;
+float green = 0.0f;
+float blue = 0.0f;
+
+
+/*
+ * bleu : rgb(0, 200,255 )
+ * orange : rgb(255, 105, 0)
+ */
+void setup() {
+
+  ring1.begin();
+
+  timeline.mode(Tween::Mode::REPEAT_TL); // la timeline doit se répéter à l'infini
+
+  timeline.add(red) 
+  .init(0) 
+  .then(255, 2000) 
+  .hold(2000) 
+  .then(0, 2000)
+  .hold(2000); 
+
+  timeline.add(green) 
+  .init(200) 
+  .then(105, 2000) 
+  .hold(2000) 
+  .then(200, 2000)
+  .hold(2000); 
+
+  timeline.add(blue) 
+  .init(255) 
+  .then(0, 2000) 
+  .hold(2000) 
+  .then(255, 2000)
+  .hold(2000); 
+
+  timeline.start(); // on démarre la timeline
+}
+
+void loop() {
+
+  timeline.update(); // on fait les calculs de la timeline
+
+  // on parcourt les leds comme d'habitude
+  for (int i = 0; i < NUMPIXELS ; i++) {
+    ring1.setPixelColor(i, ring1.Color(red, green, blue));
+  }
+
+  ring1.show(); // on n'oublie pas d'afficher les couleurs sur l'anneau
+
+}
+
+```
+
+Nous avons des temps d'attente
+
+- on commence à rgb(0, 200, 255)
+- on va à rgb(255, 105, 0) en 2 secondes
+- on attend 2 secondes
+- on revient à rgb(0, 200, 255) en 2 secondes
+- on attend de nouveau 2 secondes
+
+
+Profitons du temps d'attente au milieu pour créer une configuration spécifique. Pour cela il est possible d'accéder à la position à laquelle nous somme dans la timeline en faisant
+
+```c
+timeline.sec()
+```
+
+Nous pouvons alors utiliser une condition **if(){}** pour faire quelquechose de particulier.
+
+Un if permet de vérifier une condition (entre parenthèse) et d'éxécuter du code (entre accolades) uniquement si la condition est vraie.
+
+```c
+if (timeline.sec() > 2. && timeline.sec() < 4.) {
+
+}
+```
+la condition exprimée ci-dessus permet donc d'éxécuter du code uniquement si la timeline est à une position comprise entre 2 secondes et 4 secondes.
+
+Par exemple, vous pourriez adapter un des exemples de code vu précédement pour réaliser cette animation :
+
+![](./assets/exemple_05_complete.gif)
+
+```c
+
+
+#include <Tween.h>
+#include <Adafruit_NeoPixel.h>
+
+// initialisation des leds
+#define PIN        6
+#define NUMPIXELS 16
+Adafruit_NeoPixel ring1(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+// initialisation de la timeline
+Tween::Timeline timeline;
+// initialisation de variables qui vont être modifiées
+float red = .0f;
+float green = 0.0f;
+float blue = 0.0f;
+
+
+/*
+   bleu : rgb(0, 200,255 )
+   orange : rgb(255, 105, 0)
+*/
+void setup() {
+
+  ring1.begin();
+
+  timeline.mode(Tween::Mode::REPEAT_TL); // la timeline doit se répéter à l'infini
+
+  timeline.add(red)
+  .init(0)
+  .then(255, 2000)
+  .hold(2000)
+  .then(0, 2000)
+  .hold(2000);
+
+  timeline.add(green)
+  .init(200)
+  .then(105, 2000)
+  .hold(2000)
+  .then(200, 2000)
+  .hold(2000);
+
+  timeline.add(blue)
+  .init(255)
+  .then(0, 2000)
+  .hold(2000)
+  .then(255, 2000)
+  .hold(2000);
+
+  timeline.start(); // on démarre la timeline
+}
+
+void loop() {
+
+  timeline.update(); // on fait les calculs de la timeline
+
+  // on parcourt les leds comme d'habitude
+  for (int i = 0; i < NUMPIXELS ; i++) {
+    ring1.setPixelColor(i, ring1.Color(red, green, blue));
+  }
+
+
+  if (timeline.sec() > 2. && timeline.sec() < 4.) {
+
+    for (int i = 0; i < NUMPIXELS ; i+=1) {
+      if (i % 4 == 0) {
+        ring1.setPixelColor(i, ring1.Color(red, green, blue));
+      }
+      else {
+        ring1.setPixelColor(i, ring1.Color(0, 0, 0));
+      }
+    }
+  }
+
+ 
+
+  ring1.show(); // on n'oublie pas d'afficher les couleurs sur l'anneau
+
+}
+```
 
 
 ## Brancher et assigner plusieurs anneaux
 
+Pour brancher plusieurs anneaux en même temps, vous pouvez suivre le schéma de cablage suivant :
+
 ![](./assets/fritzing_neopixel_2.PNG)
+
+Le code va un peu se complexifier mais aussi se simplifier en même temps car nous allons devoir créer une structure de données pour pouvoir manipuler les composantes des couleurs.
+
+Cette structure a juste pour but de stocker des couleurs et de permettre à la timeline de fonctionner avec plus de composantes.
+
+Il vous faudra copier ce code tout en haut de votre programme pour en profiter (il n'est pas nécessaire de tout comprendre - mais il faut s'avoir l'utiliser !) :
+
+```c
+
+struct Vec3 {
+  float r;
+  float g;
+  float b;
+  Vec3()
+    : r(0), g(0), b(0) {}
+  Vec3(const float r, const float g, const float b)
+    : r(r), g(g), b(b) {}
+  Vec3 operator+(const Vec3& rhs) const {
+    return Vec3(r + rhs.r, g + rhs.g, b + rhs.b);
+  }
+  Vec3 operator-(const Vec3& rhs) const {
+    return Vec3(r - rhs.r, g - rhs.g, b - rhs.b);
+  }
+  Vec3 operator*(const float f) const {
+    return Vec3(r * f, g * f, b * f);
+  }
+};
+
+```
+
+
+Ce bout de code va nous permettre de créer des variables d'un nouveau type qui representeront une couleur et seront manipulables par notre timeline. 
+
+Par exemple je peux créer la couleur orange en écrivant :
+```c
+Vec3 orange = Vec3(255, 105, 0);
+``` 
+Ensuite je pourrai accéder à la composante rouge de la couleur orange en écrivant *orange.r*
+
+Nous pouvons donc créer deux couleurs références *orange* et *bleu* qui seront nos états et de couleurs *v1* et *v2* qui seront les couleurs de chacun des anneaux.
+
+```c
+/* 
+ *  définition des couleurs de notre séquence
+ *  ce sont des couleurs qui vont être des points de passage
+ *  bleu : rgb(0, 200,255 )
+ *  orange : rgb(255, 105, 0)
+ *  ici nous en avons 2 mais nous pouvons en avoir plus
+ */
+Vec3 bleu = Vec3(0, 200, 255);
+Vec3 orange = Vec3(255, 105, 0);
+
+/*
+ * définition des couleurs courante pour chaque anneau
+ * v1 sera pour l'anneau 1
+ * v2 sera pour l'anneau 2
+ */
+Vec3 v1;
+Vec3 v2;
+```
+
+Nous pourrons ensuite utiliser ces valeurs comme paramètres de notre timeline, par exemple :
+```c
+  // première séquence
+  // on manipule la valeur v1
+  // qui sera la couleur de l'anneau 1
+  timeline.add(v1)
+  .init(orange)
+  .then(bleu, 2000)
+  .hold(2000)
+  .then(orange, 2000)
+  .hold(2000);
+```
+
+et ainsi de suite.
+
+Vous pourez trouver ci-dessous un exemple de code commenté permettant de créer cette animation :
+
+![](./assets/exemple_06_rings.gif)
+
+```c
+/*
+   Structure de données pour stocker des couleurs
+*/
+struct Vec3 {
+  float r;
+  float g;
+  float b;
+  Vec3()
+    : r(0), g(0), b(0) {}
+  Vec3(const float r, const float g, const float b)
+    : r(r), g(g), b(b) {}
+  Vec3 operator+(const Vec3& rhs) const {
+    return Vec3(r + rhs.r, g + rhs.g, b + rhs.b);
+  }
+  Vec3 operator-(const Vec3& rhs) const {
+    return Vec3(r - rhs.r, g - rhs.g, b - rhs.b);
+  }
+  Vec3 operator*(const float f) const {
+    return Vec3(r * f, g * f, b * f);
+  }
+};
+
+// biblithèques habituelles
+#include <Tween.h>
+#include <Adafruit_NeoPixel.h>
+
+// initialisation des leds anneau 1
+#define PIN        6
+#define NUMPIXELS 16
+Adafruit_NeoPixel ring1(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+// initialisation des leds anneau 2
+#define PIN2        9 // la broche de controle est différente
+#define NUMPIXELS  16
+Adafruit_NeoPixel ring2(NUMPIXELS, PIN2, NEO_GRB + NEO_KHZ800);
+
+
+// initialisation de la timeline
+Tween::Timeline timeline;
+
+/*
+    définition des couleurs de notre séquence
+    ce sont des couleurs qui vont être des points de passage
+    bleu : rgb(0, 200,255 )
+    orange : rgb(255, 105, 0)
+    ici nous en avons 2 mais nous pouvons en avoir plus
+*/
+Vec3 bleu = Vec3(0, 200, 255);
+Vec3 orange = Vec3(255, 105, 0);
+
+/*
+   définition des couleurs courante pour chaque anneau
+   v1 sera pour l'anneau 1
+   v2 sera pour l'anneau 2
+*/
+Vec3 v1;
+Vec3 v2;
+
+void setup() {
+  // initialisation de l'anneau 1
+  ring1.begin();
+  ring2.begin();
+
+  // initialisation de la timeline
+  timeline.mode(Tween::Mode::REPEAT_TL);
+
+  // première séquence
+  // on manipule la valeur v1
+  // qui sera la couleur de l'anneau 1
+  timeline.add(v1)
+  .init(orange)
+  .then(bleu, 2000)
+  .hold(2000)
+  .then(orange, 2000)
+  .hold(2000);
+
+  // seconde séquence
+  // on manipule la valeur v2
+  // qui sera la couleur de l'anneau 2
+  timeline.add(v2)
+  .init(bleu)
+  .then(orange, 2000)
+  .hold(2000)
+  .then(bleu, 2000)
+  .hold(2000);
+
+  timeline.start(); // on démarre la timeline
+}
+
+void loop() {
+
+  timeline.update(); // on fait les calculs de la timeline
+
+  // on parcourt les leds comme d'habitude
+  for (int i = 0; i < NUMPIXELS ; i++) {
+    // on assigne l'anneau 1
+    ring1.setPixelColor(i, ring1.Color(v1.r, v1.g, v1.b)); // on utilise v1 pour accéder à ses composantes r g et b
+    // on assigne l'anneau 2
+    ring2.setPixelColor(i, ring2.Color(v2.r, v2.g, v2.b)); // on utilise v2 pour accéder à ses composantes r g et b
+  }
+  // on actualise les anneaux
+  ring1.show();
+  ring2.show();
+}
+
+``` 
+
 
 
 ## Branchement avec une alimentation externe
 
+Pour ajouter une troisième source de lumière il faudra avoir recours à une alimentation externe pour avoir plus de courant disponible. Voici le schéma de branchement qui vous permettra de réaliser le circuit électrique nécessaire.
+
 ![](./assets/fritzing_neopixel_3.PNG)
+
+Normalement en vous inspirant du code pour deux anneaux vous devriez réussir à l'adapter pour 3 anneaux, car vous savez déjà beaucoup de choses !
