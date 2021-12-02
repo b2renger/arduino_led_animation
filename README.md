@@ -1,17 +1,41 @@
-# arduino_led_animation
+<!-- vscode-markdown-toc -->
+# <a name='Contenu'></a>Contenu
+ 1. [Brancher un anneau ou ruban de Leds](#BrancherunanneauourubandeLeds)
+	* 1.1. [Installation de la bibliothèque](#Installationdelabibliothque)
+	* 1.2. [Programmer les leds manuellement](#Programmerlesledsmanuellement)
+	* 1.3. [Utiliser une boucle pour assigner toutes les leds](#Utiliserunebouclepourassignertouteslesleds)
+	* 1.4. [Le mode de couleur HSB](#LemodedecouleurHSB)
+ 2. [La bibliothèque Tween](#LabibliothqueTween)
+	* 2.1. [Timeline](#Timeline)
+	* 2.2. [Transition simple](#Transitionsimple)
+	* 2.3. [Contrôler deux valeurs avec la timeline](#Contrlerdeuxvaleursaveclatimeline)
+	* 2.4. [Les transitions en mode RGB](#LestransitionsenmodeRGB)
+ 3. [Programmation avancée](#Programmationavance)
+	* 3.1. [Animation radiale](#Animationradiale)
+	* 3.2. [Noise](#Noise)
+	* 3.3. [Mélanger timeline et animations](#Mlangertimelineetanimations)
+ 4. [Brancher et assigner plusieurs anneaux](#Brancheretassignerplusieursanneaux)
+	* 4.1. [Deux anneaux : alimentation par arduino](#Deuxanneaux:alimentationpararduino)
+	* 4.2. [Trois anneaux : alimentation externe](#Troisanneaux:alimentationexterne)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
 
 A crash course focused on led animation with arduino for designers
 
-Dans ce document nous allons nous concentrer sur la création d'animations basées sur une timeline qui se joueront sur des leds de type neopixels; comme présenté ci-dessous :
-
-GIF à Intégrer
+Dans ce document nous allons nous concentrer sur la création d'animations basées sur une timeline qui se joueront sur des leds de type neopixels; 
 
 Cette ressource n'a pas vocation à être une introduction à arduino, vous pourrez trouver une ressource plus générale sur arduino et suivant ce lien : https://github.com/b2renger/Introduction_Arduino
 
 Il peut-être intéressant de lire l'introduction du lien ci-dessus si vous ne connaissez absolument pas arduino avant de continuer; notament si vous souhaitez découvrir l'anatomie d'une carte arduino, les principes de base des broches d'entrée et sortie, ainsi que le logiciel permettant de programmer les cartes.
 
 
-## Brancher un anneau ou ruban de Leds
+
+
+##  1. <a name='BrancherunanneauourubandeLeds'></a>Brancher un anneau ou ruban de Leds
 
 Il faut comprendre qu'un anneau de leds consomme du courant et qu'une carte arduino ne peut fournir qu'une certaine quantité de courant, et donc à partir d'un certain nombre il faudra avoir recours à une alimentation externe. Mais nous détaillerons ça plus tard.
 
@@ -21,7 +45,9 @@ Commençons donc par brancher notre premier anneau, directement sur la carte :
 
 Nous pouvons maintenant ouvrir le logiciel [arduino](https://www.arduino.cc/en/software), afin de programmer !
 
-### Installation de la bibliothèque
+[**^ Home**](#Contenu)
+
+###  1.1. <a name='Installationdelabibliothque'></a>Installation de la bibliothèque
 
 Afin de pouvoir adresser des couleurs aux leds il faut utiliser une bibliothèque logicielle dédiée au type de leds utiliser.
 
@@ -33,7 +59,9 @@ Puis, dans le champ de recherche taper "neopixels" et choisir la bibliothèque *
 
 ![sélection de bibliothèque](./assets/gestionnaire_lib.PNG)
 
-### Programmer les leds manuellement
+[**^ Home**](#Contenu)
+
+###  1.2. <a name='Programmerlesledsmanuellement'></a>Programmer les leds manuellement
 
 Pour commencer à produire de la lumière le plus simple est d'adresser les leds manuellement en utilisant l'index de la led que nous voulons éclairer. L'index étant un chiffre correspondant au numéro de la led sur l'anneau.
 
@@ -82,7 +110,9 @@ Vous devriez alors obtenir ce résultat :
 
 Rien que pour 16 leds ce processus est un peu fastidieu; imaginez alors en avoir 32 ou 400 ! et ne parlons même pas des animations potentielles que nous souhaiterions créer ... 
 
-### Utiliser une boucle pour assigner toutes les leds
+[**^ Home**](#Contenu)
+
+###  1.3. <a name='Utiliserunebouclepourassignertouteslesleds'></a>Utiliser une boucle pour assigner toutes les leds
 
 En programmation nous pouvons utiliser une **boucle for** pour répéter une action plusieures fois.
 
@@ -206,7 +236,9 @@ On calcule aussi une variable appelée *b* qui sera le "miroir" de *a* par rappo
 ![](./assets/exemple02b.jpg)
 
 
-### Le mode de couleur HSB
+[**^ Home**](#Contenu)
+
+###  1.4. <a name='LemodedecouleurHSB'></a>Le mode de couleur HSB
 
 Le mode RGB a ses limites, il permet de faire beaucoup de choses, mais il existe un autre mode appelé HSB pour : Hue Saturation Brightness. Cela signifie qu'en lieu et place de spécifier les composantes rouges, vertes et bleues, nous pouvons définir des couleur grâce à leur teinte, leur saturation et leur luminosité.
 
@@ -286,7 +318,9 @@ Avec correction :
 ![](assets/exemple03_gamma.jpg)
 
 
-## La bibliothèque Tween
+[**^ Home**](#Contenu)
+
+##  2. <a name='LabibliothqueTween'></a>La bibliothèque Tween
 
 Nous allons maintenant découvrir comment il est possible de construire des animations de leds et des scénario de couleurs.
 
@@ -307,7 +341,10 @@ Ensuite côté arduino, il suffit d'importer le fichier zip qui vient d'être t�
 
 et c'est bon la bibliothèque devrait être installé dans l'environnement arduino. Vous pouvez supprimer le fichier zip téléchargé.
 
-### Timeline
+
+[**^ Home**](#Contenu)
+
+###  2.1. <a name='Timeline'></a>Timeline
 
 Grâce à cette bibliothèque nous allons pouvoir travailler sous la forme de timeline.
 
@@ -317,7 +354,9 @@ Pour trouver des couleurs exprimées en rgb ou hsb vous pouvez vous rendre ici :
 https://color.adobe.com/fr/create/color-wheel
 
 
-#### Transition simple
+[**^ Home**](#Contenu)
+
+###  2.2. <a name='Transitionsimple'></a>Transition simple
 
 Pour notre première animation nous allons fonctionner en mode HSB et nous allons transiter :
 - d'un bleu h: 173, s: 255, b: 255
@@ -402,7 +441,9 @@ par :
 qui réalisera un easing elastique en entrée et en sortie d'animation.
 
 
-#### Contrôler deux valeurs avec la timeline
+[**^ Home**](#Contenu)
+
+###  2.3. <a name='Contrlerdeuxvaleursaveclatimeline'></a>Contrôler deux valeurs avec la timeline
 
 Ici nous ne maitrisons pas complétement ce qui se passe entre nos deux teintes, nous passons par le vert et le jaune. 
 
@@ -450,7 +491,9 @@ Cela devrait vous permettre d'obtenir cette animation, dont vous trouverez le co
 ![](./assets/exemple_04_hs.gif)
 
 
-### Les transitions en mode RGB 
+[**^ Home**](#Contenu)
+
+###  2.4. <a name='LestransitionsenmodeRGB'></a>Les transitions en mode RGB 
 
 On peut fonctionner de la même façon pour faire des transitions en RGB d'une couleur à une autre en utilisant trois variables, une pour chaque composante :
 
@@ -522,10 +565,12 @@ void loop() {
 ![](./assets/exemple_04_rgb.gif)
 
 
-## Programmation avancée
+[**^ Home**](#Contenu)
+
+##  3. <a name='Programmationavance'></a>Programmation avancée
 Nous allons maintenant nous concentrer sur des animations un peu plus complexes qui vont assigner des valeurs différentes à chaque led d'un anneau.
 
-### Animation radiale
+###  3.1. <a name='Animationradiale'></a>Animation radiale
 
 Nous allons réaliser cette animation :
 
@@ -611,7 +656,9 @@ void loop() {
 ```
 
 
-### Noise
+[**^ Home**](#Contenu)
+
+###  3.2. <a name='Noise'></a>Noise
 
 Nous allons maintenant nous intéresser à une autre technique, permettant d'obtenir des rendu plus organiques / ondulants.
 
@@ -701,14 +748,15 @@ Par exemple :
 - idem pour *ny = sn.noise(y, i*2);*
 
 
-#### Mélanger timeline et animations
+[**^ Home**](#Contenu)
+
+###  3.3. <a name='Mlangertimelineetanimations'></a>Mélanger timeline et animations
 
 Le dernier exemple avancé va vous permettre de mélanger des éléments liés à la timeline et des animations pixel par pixel.
 Précédement nous avons utilisé *.hold(2000)* pour maintenir un état pendant 2 secondes; il est possible d'utiliser ce temps pour réaliser une autre animation ou donner une configuration manuellement à notre anneau.
 
 Reprenons notre animation en RGB qui passe du bleu au orange
 
-```c
 
 ```c
 #include <Tween.h>
@@ -785,7 +833,7 @@ Nous avons des temps d'attente
 - on attend de nouveau 2 secondes
 
 
-Profitons du temps d'attente au milieu pour créer une configuration spécifique. Pour cela il est possible d'accéder à la position à laquelle nous somme dans la timeline en faisant
+Profitons du temps d'attente au milieu pour créer une configuration spécifique. Pour cela il est possible d'accéder à la position à laquelle nous somme dans la timeline en faisant :
 
 ```c
 timeline.sec()
@@ -800,15 +848,15 @@ if (timeline.sec() > 2. && timeline.sec() < 4.) {
 
 }
 ```
+
 la condition exprimée ci-dessus permet donc d'éxécuter du code uniquement si la timeline est à une position comprise entre 2 secondes et 4 secondes.
 
 Par exemple, vous pourriez adapter un des exemples de code vu précédement pour réaliser cette animation :
 
 ![](./assets/exemple_05_complete.gif)
 
+
 ```c
-
-
 #include <Tween.h>
 #include <Adafruit_NeoPixel.h>
 
@@ -889,7 +937,11 @@ void loop() {
 ```
 
 
-## Brancher et assigner plusieurs anneaux
+[**^ Home**](#Contenu)
+
+##  4. <a name='Brancheretassignerplusieursanneaux'></a>Brancher et assigner plusieurs anneaux
+
+###  4.1. <a name='Deuxanneaux:alimentationpararduino'></a>Deux anneaux : alimentation par arduino
 
 Pour brancher plusieurs anneaux en même temps, vous pouvez suivre le schéma de cablage suivant :
 
@@ -1083,11 +1135,17 @@ void loop() {
 ``` 
 
 
+[**^ Home**](#Contenu)
 
-## Branchement avec une alimentation externe
+###  4.2. <a name='Troisanneaux:alimentationexterne'></a>Trois anneaux : alimentation externe
 
 Pour ajouter une troisième source de lumière il faudra avoir recours à une alimentation externe pour avoir plus de courant disponible. Voici le schéma de branchement qui vous permettra de réaliser le circuit électrique nécessaire.
 
 ![](./assets/fritzing_neopixel_3.PNG)
 
 Normalement en vous inspirant du code pour deux anneaux vous devriez réussir à l'adapter pour 3 anneaux, car vous savez déjà beaucoup de choses !
+
+Pour dimensionner une alimentation il faut compter qu'une led consomme au maximum 60mA lorsqu'elle est allumée en blanc. Théoriquement si on allume toutes les leds d'un anneau en blanc on consomme donc 0,96 A. Pour deux anneaux 1,92 A et pour 3 anneaux.
+
+
+[**^ Home**](#Contenu)
