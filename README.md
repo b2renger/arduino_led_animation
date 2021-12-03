@@ -15,8 +15,8 @@
 	* 3.2. [Noise](#Noise)
 	* 3.3. [Mélanger timeline et animations](#Mlangertimelineetanimations)
  4. [Brancher et assigner plusieurs anneaux](#Brancheretassignerplusieursanneaux)
-	* 4.1. [Deux anneaux : alimentation par arduino](#Deuxanneaux:alimentationpararduino)
-	* 4.2. [Trois anneaux : alimentation externe](#Troisanneaux:alimentationexterne)
+	* 4.1. [Deux anneaux - alimentation par arduino](#Deuxanneauxalimentationpararduino)
+	* 4.2. [Trois anneaux - alimentation externe](#Troisanneauxalimentationexterne)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -941,7 +941,7 @@ void loop() {
 
 ##  4. <a name='Brancheretassignerplusieursanneaux'></a>Brancher et assigner plusieurs anneaux
 
-###  4.1. <a name='Deuxanneaux:alimentationpararduino'></a>Deux anneaux : alimentation par arduino
+###  4.1. <a name='Deuxanneauxalimentationpararduino'></a>Deux anneaux : alimentation par arduino
 
 Pour brancher plusieurs anneaux en même temps, vous pouvez suivre le schéma de cablage suivant :
 
@@ -1134,10 +1134,9 @@ void loop() {
 
 ``` 
 
-
 [**^ Home**](#Contenu)
 
-###  4.2. <a name='Troisanneaux:alimentationexterne'></a>Trois anneaux : alimentation externe
+###  4.2. <a name='Troisanneauxalimentationexterne'></a>Trois anneaux : alimentation externe
 
 Pour ajouter une troisième source de lumière il faudra avoir recours à une alimentation externe pour avoir plus de courant disponible. Voici le schéma de branchement qui vous permettra de réaliser le circuit électrique nécessaire.
 
