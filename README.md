@@ -1148,3 +1148,69 @@ Pour dimensionner une alimentation il faut compter qu'une led consomme au maximu
 
 
 [**^ Home**](#Contenu)
+
+
+```c
+void transition_ring1(float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    int currentTime = map(t, startT, endT, 0, 1000);
+    float r = map(currentTime, 0, 1000, startC.r, endC.r);
+    float g = map(currentTime, 0, 1000, startC.g, endC.g);
+    float b = map(currentTime, 0, 1000, startC.b, endC.b);
+    v1.r = r;
+    v1.g = g;
+    v1.b = b;
+    for (int i = 0; i < NUMPIXELS ; i++) {
+      // on assigne l'anneau 1
+      ring1.setPixelColor(i, ring1.Color(v1.r, v1.g, v1.b));
+    }
+  }
+}
+```
+
+
+```c
+
+void transition_ring2(float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    int currentTime = map(t, startT, endT, 0, 1000);
+    float r = map(currentTime, 0, 1000, startC.r, endC.r);
+    float g = map(currentTime, 0, 1000, startC.g, endC.g);
+    float b = map(currentTime, 0, 1000, startC.b, endC.b);
+    v2.r = r;
+    v2.g = g;
+    v2.b = b;
+    for (int i = 0; i < NUMPIXELS ; i++) {
+      // on assigne l'anneau 1
+      ring2.setPixelColor(i, ring2.Color(v2.r, v2.g, v2.b));
+    }
+  }
+}
+
+
+```
+
+
+```c
+
+void transition_ring1_spe1(float t, float startT, float endT) {
+  if (t > startT && t < endT) {
+    int currentTime = map(t, startT, endT, 0, 1000);
+    /*
+     * écrire du code spécifique qui se déroule dans un interval de temps normalisé 
+     * entre 0 et 1000
+     * 
+     * 
+     */
+  }
+}
+```
+
+```c
+int dur = millis() % totalTime;
+transition_ring1(dur, 0, 1000, noir, bleu);
+transition_ring1(dur, 1000, 2000, bleu, bleu);
+transition_ring1(dur, 2000, 4000, bleu, orange);
+transition_ring1(dur, 4000, 5000, orange, noir);
+transition_ring1(dur, 5000, 8000, noir, noir);
+```
