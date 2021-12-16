@@ -297,18 +297,64 @@ Avec correction :
 
 ## Créer des transitions
 
+Pour créer des transitions nous allons utiliser du code qu'il n'est pas nécessaire de comprendre, mais qu'il est nécessaire de savoir utiliser !
+
+Nous allons quand même détailler un peu le code à des fins pédagogiques pour ceux qui veulent aller un peu plus loin.
+
+L'idée est d'avoir une structure de donnée permettant de stocker les couleurs sous forme de variables et d'avoir une série de fonctions qui auront des effets directes sur un anneau de led.
+
+Vous trouverez à la fin de cette section un exemple de code complet et fonctionnel que vous n'aurez qu'à modifier plus tard.
+
+
 
 [**^ Home**](#Contenu)
 
 ### Des structures de codes à savoir utiliser
 
+#### Un structure pour stocker les couleurs
 
+Une structure permet de créer un nouveau type de données. Ces données seront des vecteurs à trois composantes car les couleurs ont trois composantes que l'on soit en RGB ou en HSB.
+
+Voici à quoi va ressembler notre structure de données :
+```c
+struct Vec3 {
+  float c1;
+  float c2;
+  float c3;
+  Vec3()
+    : c1(0), c2(0), c3(0) {}
+  Vec3(const float c1, const float c2, const float c3)
+    : c1(c1), c2(c2), c3(c3) {}
+};
+```
+
+Ces quelques lignes de code doivent être ajoutées tout au début de votre programme juste après avoir importé la bibliothèque adafruit pour les leds neopixel.
+
+Cette structure va nous permettre de pouvoir définir des couleurs de cette manière :
+
+```c
+Vec3 bleu = Vec3(0, 200, 255);
+Vec3 orange = Vec3(255, 105, 0);
+Vec3 noir = Vec3(0, 0, 0);
+Vec3 rose = Vec3(220, 0, 120);
+```
+
+Plus tard nous pourrons du coup directement utiliser les noms des couleurs pour les afficher sur nos anneaux.
+Il suffit de copier/coller une ligne et de modifier les composantes à votre guise que ce soit en RGB ou en HSB.
 
 Pour trouver des couleurs exprimées en rgb ou hsb vous pouvez vous rendre ici :
 https://color.adobe.com/fr/create/color-wheel
 
+[**^ Home**](#Contenu)
+
+#### Gérer le temps
 
 [**^ Home**](#Contenu)
+
+#### Des fonctions pour réaliser des transitions
+
+[**^ Home**](#Contenu)
+
 
 ###  2.2. <a name='Transitionsimple'></a>Transition simple
 
