@@ -349,6 +349,21 @@ https://color.adobe.com/fr/create/color-wheel
 
 #### Gérer le temps
 
+Il faudra arriver à gérer les timing des animations pour cela nous allons exprimer tous les temps en millisecondes.
+
+Le premier truc qu'il nous faut sont des variables capables de stocker le temps écoulé depuis le début du programme et de boucler sur un temps défini.
+
+Ces deux lignes de code seront à copier au début de la fonction loop() :
+
+```c
+long totalTime = 5000;
+long dur = millis() % totalTime;
+```
+
+*totalTime* : permet de définir le temps au bout duquel on souhaite boucler; ici 5000 ms soit 5 secondes. Vous pouvez donc changer la valeur 5000 à la valeur nécessaire pour votre animation.
+
+*dur* : est le temps actuel nous allons l'utiliser pour le passer à nos fonction d'animation pour que celles-ci puissent s'executer dans les timings définis.
+
 [**^ Home**](#Contenu)
 
 #### Des fonctions pour réaliser des transitions
