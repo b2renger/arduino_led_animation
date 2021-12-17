@@ -10,7 +10,7 @@ Il peut-être intéressant de lire l'introduction du lien ci-dessus si vous ne c
 
 
 
-##  1. <a name='BrancherunanneauourubandeLeds'></a>Brancher un anneau ou ruban de Leds
+## Brancher un anneau ou ruban de Leds
 
 Il faut comprendre qu'un anneau de leds consomme du courant et qu'une carte arduino ne peut fournir qu'une certaine quantité de courant, et donc à partir d'un certain nombre il faudra avoir recours à une alimentation externe. Mais nous détaillerons ça plus tard.
 
@@ -22,7 +22,7 @@ Nous pouvons maintenant ouvrir le logiciel [arduino](https://www.arduino.cc/en/s
 
 [**^ Home**](#Contenu)
 
-###  1.1. <a name='Installationdelabibliothque'></a>Installation de la bibliothèque
+### Installation de la bibliothèque
 
 Afin de pouvoir adresser des couleurs aux leds il faut utiliser une bibliothèque logicielle dédiée au type de leds utiliser.
 
@@ -36,7 +36,7 @@ Puis, dans le champ de recherche taper "neopixels" et choisir la bibliothèque *
 
 [**^ Home**](#Contenu)
 
-###  1.2. <a name='Programmerlesledsmanuellement'></a>Programmer les leds manuellement
+### Programmer les leds manuellement
 
 Pour commencer à produire de la lumière le plus simple est d'adresser les leds manuellement en utilisant l'index de la led que nous voulons éclairer. L'index étant un chiffre correspondant au numéro de la led sur l'anneau.
 
@@ -87,7 +87,7 @@ Rien que pour 16 leds ce processus est un peu fastidieu; imaginez alors en avoir
 
 [**^ Home**](#Contenu)
 
-###  1.3. <a name='Utiliserunebouclepourassignertouteslesleds'></a>Utiliser une boucle pour assigner toutes les leds
+### Utiliser une boucle pour assigner toutes les leds
 
 En programmation nous pouvons utiliser une **boucle for** pour répéter une action plusieures fois.
 
@@ -213,7 +213,7 @@ On calcule aussi une variable appelée *b* qui sera le "miroir" de *a* par rappo
 
 [**^ Home**](#Contenu)
 
-###  1.4. <a name='LemodedecouleurHSB'></a>Le mode de couleur HSB
+### Le mode de couleur HSB
 
 Le mode RGB a ses limites, il permet de faire beaucoup de choses, mais il existe un autre mode appelé HSB pour : Hue Saturation Brightness. Cela signifie qu'en lieu et place de spécifier les composantes rouges, vertes et bleues, nous pouvons définir des couleur grâce à leur teinte, leur saturation et leur luminosité.
 
@@ -295,98 +295,11 @@ Avec correction :
 
 [**^ Home**](#Contenu)
 
-## Créer des transitions
 
-Pour créer des transitions nous allons utiliser du code qu'il n'est pas nécessaire de comprendre, mais qu'il est nécessaire de savoir utiliser !
-
-Nous allons quand même détailler un peu le code à des fins pédagogiques pour ceux qui veulent aller un peu plus loin.
-
-L'idée est d'avoir une structure de donnée permettant de stocker les couleurs sous forme de variables et d'avoir une série de fonctions qui auront des effets directes sur un anneau de led.
-
-Vous trouverez à la fin de cette section un exemple de code complet et fonctionnel que vous n'aurez qu'à modifier plus tard.
-
-
-
-[**^ Home**](#Contenu)
-
-### Des structures de codes à savoir utiliser
-
-#### Un structure pour stocker les couleurs
-
-Une structure permet de créer un nouveau type de données. Ces données seront des vecteurs à trois composantes car les couleurs ont trois composantes que l'on soit en RGB ou en HSB.
-
-Voici à quoi va ressembler notre structure de données :
-```c
-struct Vec3 {
-  float c1;
-  float c2;
-  float c3;
-  Vec3()
-    : c1(0), c2(0), c3(0) {}
-  Vec3(const float c1, const float c2, const float c3)
-    : c1(c1), c2(c2), c3(c3) {}
-};
-```
-
-Ces quelques lignes de code doivent être ajoutées tout au début de votre programme juste après avoir importé la bibliothèque adafruit pour les leds neopixel.
-
-Cette structure va nous permettre de pouvoir définir des couleurs de cette manière :
-
-```c
-Vec3 bleu = Vec3(0, 200, 255);
-Vec3 orange = Vec3(255, 105, 0);
-Vec3 noir = Vec3(0, 0, 0);
-Vec3 rose = Vec3(220, 0, 120);
-```
-
-Plus tard nous pourrons du coup directement utiliser les noms des couleurs pour les afficher sur nos anneaux.
-Il suffit de copier/coller une ligne et de modifier les composantes à votre guise que ce soit en RGB ou en HSB.
-
-Pour trouver des couleurs exprimées en rgb ou hsb vous pouvez vous rendre ici :
-https://color.adobe.com/fr/create/color-wheel
-
-[**^ Home**](#Contenu)
-
-#### Gérer le temps
-
-Il faudra arriver à gérer les timing des animations pour cela nous allons exprimer tous les temps en millisecondes.
-
-Le premier truc qu'il nous faut sont des variables capables de stocker le temps écoulé depuis le début du programme et de boucler sur un temps défini.
-
-Ces deux lignes de code seront à copier au début de la fonction loop() :
-
-```c
-long totalTime = 5000;
-long dur = millis() % totalTime;
-```
-
-*totalTime* : permet de définir le temps au bout duquel on souhaite boucler; ici 5000 ms soit 5 secondes. Vous pouvez donc changer la valeur 5000 à la valeur nécessaire pour votre animation.
-
-*dur* : est le temps actuel nous allons l'utiliser pour le passer à nos fonction d'animation pour que celles-ci puissent s'executer dans les timings définis.
-
-[**^ Home**](#Contenu)
-
-#### Des fonctions pour réaliser des transitions
-
-[**^ Home**](#Contenu)
-
-
-###  2.2. <a name='Transitionsimple'></a>Transition simple
-
-
-Ici nous avons réalisé des transitions linéaires, mais il est possible d'utiliser des courbes de **easing** qui permettent de gérer des accélération et ralentissements.
-
-Vous pouvez vous référer à cette page pour comprendre comment fonctionnent les différentes fonctions de easing : https://easings.net/
-
-
-
-
-[**^ Home**](#Contenu)
-
-##  3. <a name='Programmationavance'></a>Programmation avancée
+## Programmation avancée
 Nous allons maintenant nous concentrer sur des animations un peu plus complexes qui vont assigner des valeurs différentes à chaque led d'un anneau.
 
-###  3.1. <a name='Animationradiale'></a>Animation radiale
+### Animation radiale
 
 Nous allons réaliser cette animation :
 
@@ -422,11 +335,9 @@ Du coup :
 donnera toujours un résultat entre 0 et NUMPIXELS ce qui était notre but.
 
 
-
-
 [**^ Home**](#Contenu)
 
-###  3.2. <a name='Noise'></a>Noise
+### Noise
 
 Nous allons maintenant nous intéresser à une autre technique, permettant d'obtenir des rendu plus organiques / ondulants.
 
@@ -518,21 +429,517 @@ Par exemple :
 
 [**^ Home**](#Contenu)
 
-###  3.3. <a name='Mlangertimelineetanimations'></a>Mélanger timeline et animations
+## Créer des transitions
 
-Le dernier exemple avancé va vous permettre de mélanger des éléments liés à la timeline et des animations pixel par pixel.
+Pour créer des transitions nous allons utiliser du code qu'il n'est pas nécessaire de comprendre, mais qu'il est nécessaire de savoir utiliser !
 
+Nous allons quand même détailler un peu le code à des fins pédagogiques pour ceux qui veulent aller un peu plus loin.
 
-![](./assets/exemple_05_complete.gif)
+L'idée est d'avoir une structure de donnée permettant de stocker les couleurs sous forme de variables et d'avoir une série de fonctions qui auront des effets directes sur un anneau de led.
 
+Vous trouverez à la fin de cette section un exemple de code complet et fonctionnel que vous n'aurez qu'à modifier plus tard.
 
 
 
 [**^ Home**](#Contenu)
 
-##  4. <a name='Brancheretassignerplusieursanneaux'></a>Brancher et assigner plusieurs anneaux
+### Des structures de codes à savoir utiliser
 
-###  4.1. <a name='Deuxanneauxalimentationpararduino'></a>Deux anneaux : alimentation par arduino
+#### Un structure pour stocker les couleurs
+
+Une structure permet de créer un nouveau type de données. Ces données seront des vecteurs à trois composantes car les couleurs ont trois composantes que l'on soit en RGB ou en HSB.
+
+Voici à quoi va ressembler notre structure de données :
+```c
+struct Vec3 {
+  float c1;
+  float c2;
+  float c3;
+  Vec3()
+    : c1(0), c2(0), c3(0) {}
+  Vec3(const float c1, const float c2, const float c3)
+    : c1(c1), c2(c2), c3(c3) {}
+};
+```
+
+Ces quelques lignes de code doivent être ajoutées tout au début de votre programme juste après avoir importé la bibliothèque adafruit pour les leds neopixel.
+
+Cette structure va nous permettre de pouvoir définir des couleurs de cette manière :
+
+```c
+Vec3 bleu = Vec3(0, 200, 255);
+Vec3 orange = Vec3(255, 105, 0);
+Vec3 noir = Vec3(0, 0, 0);
+Vec3 rose = Vec3(220, 0, 120);
+```
+
+Plus tard nous pourrons du coup directement utiliser les noms des couleurs pour les afficher sur nos anneaux.
+Il suffit de copier/coller une ligne et de modifier les composantes à votre guise que ce soit en RGB ou en HSB.
+
+Pour trouver des couleurs exprimées en rgb ou hsb vous pouvez vous rendre ici :
+https://color.adobe.com/fr/create/color-wheel
+
+[**^ Home**](#Contenu)
+
+#### Gérer le temps
+
+Il faudra arriver à gérer les timing des animations pour cela nous allons exprimer tous les temps en millisecondes.
+
+Le premier truc qu'il nous faut sont des variables capables de stocker le temps écoulé depuis le début du programme et de boucler sur un temps défini.
+
+Ces deux lignes de code seront à copier au début de la fonction loop() :
+
+```c
+long totalTime = 5000;
+long dur = millis() % totalTime;
+```
+
+*totalTime* : permet de définir le temps au bout duquel on souhaite boucler; ici 5000 ms soit 5 secondes. Vous pouvez donc changer la valeur 5000 à la valeur nécessaire pour votre animation.
+
+*dur* : est le temps actuel nous allons l'utiliser pour le passer à nos fonction d'animation pour que celles-ci puissent s'executer dans les timings définis.
+
+[**^ Home**](#Contenu)
+
+#### Des fonctions pour réaliser des transitions
+
+Nous allons pouvoir réaliser différents type de transitions, d'une manière générale nous allons utiliser des équations mathématiques qui s'appellent des courbes de easing et qui permettent d'avoir des transitions avec des dynamiques différentes.
+
+D'une manière générale le code d'une fonction de easing ressemble à cela :
+
+```c
+// transition linéaire d'une couleur à une autre pendant une durée donnée
+void transition_lin(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    int currentTime = map(t, startT, endT, 0, 1000);
+    float r = map(currentTime, 0, 1000, startC.c1, endC.c1);
+    float g = map(currentTime, 0, 1000, startC.c2, endC.c2);
+    float b = map(currentTime, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+```
+Il n'est pas nécessaire de le comprendre intégralement, mais il faut comprendre comment l'utiliser :)
+
+
+Nous disposerons de différentes fonctions, mais il est possible d'en créer d'autres.
+
+Pour avoir accès au différentes transitions vous devez copier/coller le code ci-dessous dans votre programme, tout en bas sous l'accolade fermante du *void loop(){}* :
+
+```c
+
+// pas de transition : une couleur fixe pendant un durée
+void fixed_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 c) {
+  if (t > startT && t < endT) {
+    int currentTime = map(t, startT, endT, 0, 1000);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(c.c1, c.c2, c.c3));
+    }
+  }
+}
+
+// transition linéaire d'une couleur à une autre pendant une durée donnée
+void transition_lin(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    int currentTime = map(t, startT, endT, 0, 1000);
+    float r = map(currentTime, 0, 1000, startC.c1, endC.c1);
+    float g = map(currentTime, 0, 1000, startC.c2, endC.c2);
+    float b = map(currentTime, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+
+// transitions : https://easings.net/
+// transition sine
+void transition_sine_InOut(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = -(cos(PI * currentTime) - 1) / 2.;
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_sine_In(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = 1 - cos((currentTime * PI) / 2.);
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_sine_Out(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = sin((currentTime * PI) / 2);
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+// Transition circ
+void transition_circ_InOut(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = currentTime < 0.5 ? (1 - sqrt(1 - pow(2 * currentTime, 2))) / 2 : (sqrt(1 - pow(-2 * currentTime + 2, 2)) + 1) / 2;
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_circ_In(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = 1 - sqrt(1 - pow(currentTime, 2));
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_circ_Out(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t =  sqrt(1 - pow(currentTime - 1, 2));
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+// Transition exponentielle
+void transition_expo_InOut(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t =  currentTime == 0
+                      ? 0
+                      : currentTime == 1
+                               ? 1
+                               : currentTime < 0.5 ? pow(2, 20 * currentTime - 10) / 2
+                               : (2 - pow(2, -20 * currentTime + 10)) / 2;
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_expo_Out(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t =  currentTime == 1 ? 1 : 1 - pow(2, -10 * currentTime);
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_expo_In(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t =   currentTime == 0 ? 0 : pow(2, 10 * currentTime - 10);
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+
+```
+
+
+### Transitions disponibles
+
+Une fois le code ci-dessus copié/collé, vous pouvez réaliser des transitions.
+
+Les fonctions disponibles sont alors :
+- fixed_color : pour une couleur fixe
+- transition_lin : pour une transition linéaire d'une couleur à une autre.
+- transition_sine_InOut
+- transition_sine_In
+- transition_sine_Out
+- transition_circ_InOut
+- transition_circ_In
+- transition_circ_Out
+- transition_expo_InOut
+- transition_expo_In
+- transition_expo_Out
+
+Vous pouvez vous référer à cette page pour comprendre comment fonctionnent les différentes fonctions de easing : https://easings.net/
+
+
+[**^ Home**](#Contenu)
+
+
+### Transition simple
+
+Ici nous avons réalisé des transitions linéaires, mais il est possible d'utiliser des courbes de **easing** qui permettent de gérer des accélération et ralentissements.
+
+
+Quand on a le code ci-dessus dans notre programme, on peut alors écrire :
+
+```c
+transition_lin(&ring1, NUMPIXELS, dur, 0, 2500, noir, bleu);
+```
+
+Pour créer une transition lumineuse :
+  - &ring1 -> sur les leds nommées ring1
+  - NUMPIXELS -> 16 leds dans notre cas - cf initialisation des leds
+  - dur -> le temps actuel
+  - 0 -> la transition démarre quand dur vaut 0 ms
+  - 2500 -> elle se finie quand dur vaut 2500 ms
+  - elle commence au noir
+  - elle finie au bleu
+
+La plupart des transitions fonctionnent de cette façon avec ces mêmes arguments à préciser entre les parenthèse.
+
+[**^ Home**](#Contenu)
+
+### Un programme complet de transitions pour un anneau
+![](./assets/transition.gif)
+
+```c
+// la bibliothèque pour les leds
+#include <Adafruit_NeoPixel.h>
+
+// la structure de données pour stocker les couleurs
+struct Vec3 {
+  float c1;
+  float c2;
+  float c3;
+  Vec3()
+    : c1(0), c2(0), c3(0) {}
+  Vec3(const float c1, const float c2, const float c3)
+    : c1(c1), c2(c2), c3(c3) {}
+};
+
+// quelques définitions de couleurs
+Vec3 bleu = Vec3(0, 200, 255);
+Vec3 orange = Vec3(255, 105, 0);
+Vec3 noir = Vec3(0, 0, 0);
+Vec3 rose = Vec3(220, 0, 120);
+
+// initialisation des leds
+#define NUMPIXELS 16
+Adafruit_NeoPixel ring1(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800); // nombre de leds, broche arduino, type de leds
+
+
+void setup() {
+
+  ring1.begin();// démarrage de l'anneau
+
+}
+
+void loop() {
+  // gestion du temps
+  long totalTime = 8000; // temps total de l'animation
+  long dur = millis() % totalTime; // timing
+
+  // créer des transitions
+
+  // transition linéaires au bleu
+  transition_lin(&ring1, NUMPIXELS, dur, 0, 2500, noir, bleu);
+
+  // flash de couleurs fixes
+  fixed_color(&ring1, NUMPIXELS, dur, 2500, 2600, noir);
+  fixed_color(&ring1, NUMPIXELS, dur, 2700, 2800, bleu);
+  fixed_color(&ring1, NUMPIXELS, dur, 2900, 3000, noir);
+  fixed_color(&ring1, NUMPIXELS, dur, 3000, 3100, rose);
+  fixed_color(&ring1, NUMPIXELS, dur, 3100, 3200, noir);
+  fixed_color(&ring1, NUMPIXELS, dur, 3200, 3300, rose);
+  fixed_color(&ring1, NUMPIXELS, dur, 3300, 3400, bleu);
+  fixed_color(&ring1, NUMPIXELS, dur, 3400, 3500, rose);
+  fixed_color(&ring1, NUMPIXELS, dur, 3500, 4000, noir);
+  // flashs rapides (on utilise une boucle for pour répéter plusieures fois un flash) sur une durée totale d'une seconde
+  for (int i = 0 ; i < 20 ; i += 4) {
+    fixed_color(&ring1, NUMPIXELS, dur, 4000 + i * 50, 4000 + (i + 1) * 50, bleu);
+    fixed_color(&ring1, NUMPIXELS, dur, 4000 + (i + 2) * 50, 4000 + (i + 3) * 50, noir);
+  }
+  //retour au noir
+  transition_sine_Out(&ring1, NUMPIXELS, dur, 5000, 7500, bleu, noir);
+  fixed_color(&ring1, NUMPIXELS, dur, 7500, 8000, noir);
+
+  ring1.show();
+
+
+}
+
+// pas de transition : une couleur fixe pendant un durée
+void fixed_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 c) {
+  if (t > startT && t < endT) {
+    int currentTime = map(t, startT, endT, 0, 1000);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(c.c1, c.c2, c.c3));
+    }
+  }
+}
+
+// transition linéaire d'une couleur à une autre pendant une durée donnée
+void transition_lin(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    int currentTime = map(t, startT, endT, 0, 1000);
+    float r = map(currentTime, 0, 1000, startC.c1, endC.c1);
+    float g = map(currentTime, 0, 1000, startC.c2, endC.c2);
+    float b = map(currentTime, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+
+// transitions : https://easings.net/
+// transition sine
+void transition_sine_InOut(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = -(cos(PI * currentTime) - 1) / 2.;
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_sine_In(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = 1 - cos((currentTime * PI) / 2.);
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_sine_Out(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = sin((currentTime * PI) / 2);
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+// Transition circ
+void transition_circ_InOut(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = currentTime < 0.5 ? (1 - sqrt(1 - pow(2 * currentTime, 2))) / 2 : (sqrt(1 - pow(-2 * currentTime + 2, 2)) + 1) / 2;
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_circ_In(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t = 1 - sqrt(1 - pow(currentTime, 2));
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_circ_Out(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t =  sqrt(1 - pow(currentTime - 1, 2));
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+// Transition exponentielle
+void transition_expo_InOut(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t =  currentTime == 0
+               ? 0
+               : currentTime == 1
+               ? 1
+               : currentTime < 0.5 ? pow(2, 20 * currentTime - 10) / 2
+               : (2 - pow(2, -20 * currentTime + 10)) / 2;
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_expo_Out(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t =  currentTime == 1 ? 1 : 1 - pow(2, -10 * currentTime);
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+void transition_expo_In(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
+  if (t > startT && t < endT) {
+    float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
+    float t =   currentTime == 0 ? 0 : pow(2, 10 * currentTime - 10);
+    float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
+    float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
+    float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
+    for (int i = 0; i < n ; i++) {
+      strip->setPixelColor(i, strip->Color(r, g, b));
+    }
+  }
+}
+
+```
+[**^ Home**](#Contenu)
+
+### Alterner des transitions de couleurs pleines et des animations pixel par pixel
+
+[**^ Home**](#Contenu)
+
+## Brancher et assigner plusieurs anneaux
+
+### Deux anneaux : alimentation par arduino
 
 Pour brancher plusieurs anneaux en même temps, vous pouvez suivre le schéma de cablage suivant :
 
@@ -579,7 +986,7 @@ Vous pourez trouver ci-dessous un exemple de code commenté permettant de créer
 
 [**^ Home**](#Contenu)
 
-###  4.2. <a name='Troisanneauxalimentationexterne'></a>Trois anneaux : alimentation externe
+### Trois anneaux : alimentation externe
 
 Pour ajouter une troisième source de lumière il faudra avoir recours à une alimentation externe pour avoir plus de courant disponible. Voici le schéma de branchement qui vous permettra de réaliser le circuit électrique nécessaire.
 
