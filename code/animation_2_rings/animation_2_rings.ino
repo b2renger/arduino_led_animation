@@ -26,7 +26,7 @@ Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);
 
 
 void setup() {
-  
+
   ring1.begin();// démarrage de l'anneau
   ring2.begin();
 
@@ -42,13 +42,9 @@ void loop() {
   // transitions linéaires
   transition_lin(&ring1, NUMPIXELS, dur, 0, 2500, noir, bleu);
   transition_lin(&ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir);
-  
-  // flash de couleurs fixes
-  fixed_color(&ring2, NUMPIXELS, dur, 0, 1000, noir);
-  fixed_color(&ring2, NUMPIXELS, dur, 1000, 2000, bleu);
-  fixed_color(&ring2, NUMPIXELS, dur, 2000, 3000, noir);
-  fixed_color(&ring2, NUMPIXELS, dur, 3000, 4000, rose);
-  fixed_color(&ring2, NUMPIXELS, dur, 4000, 5000, noir);
+
+  animation_radiale(&ring2, NUMPIXELS, dur, 0, 5000);
+
 
 
 
@@ -57,6 +53,19 @@ void loop() {
   ring2.show();
 
 }
+
+void animation_radiale(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT) {
+  if (t > startT && t < endT) {
+    int currentTime = map(t, startT, endT, 0, 1000);
+    int ledsOffset = map(currentTime, 0, 1000, 0, n * 8);
+    for (int i = 0 ; i < n ; i++) {
+      float teinteHSB = map(i, 0, n, 100, 235);
+      float teinteLeds = map(teinteHSB, 0, 360, 0, 65535);
+      strip->setPixelColor((i + ledsOffset) % n, strip->gamma32(strip->ColorHSV(teinteLeds, 255, 255)));
+    }
+  }
+}
+
 
 // pas de transition : une couleur fixe pendant un durée
 void fixed_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 c) {
@@ -161,11 +170,11 @@ void transition_expo_InOut(Adafruit_NeoPixel *strip, int n, float t, float start
   if (t > startT && t < endT) {
     float currentTime = map(t, startT, endT, 0, 1000) / 1000.;
     float t =  currentTime == 0
-                      ? 0
-                      : currentTime == 1
-                               ? 1
-                               : currentTime < 0.5 ? pow(2, 20 * currentTime - 10) / 2
-                               : (2 - pow(2, -20 * currentTime + 10)) / 2;
+               ? 0
+               : currentTime == 1
+               ? 1
+               : currentTime < 0.5 ? pow(2, 20 * currentTime - 10) / 2
+               : (2 - pow(2, -20 * currentTime + 10)) / 2;
     float r = map(t * 1000, 0, 1000, startC.c1, endC.c1);
     float g = map(t * 1000, 0, 1000, startC.c2, endC.c2);
     float b = map(t * 1000, 0, 1000, startC.c3, endC.c3);
