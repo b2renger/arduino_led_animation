@@ -7,10 +7,44 @@ Cette ressource n'a pas vocation à être une introduction à arduino, vous pour
 
 Il peut-être intéressant de lire l'introduction du lien ci-dessus si vous ne connaissez absolument pas arduino avant de continuer; notament si vous souhaitez découvrir l'anatomie d'une carte arduino, les principes de base des broches d'entrée et sortie, ainsi que le logiciel permettant de programmer les cartes.
 
+[**TL;DR**](#Deuxanneaux:exemplecomplet)
+
+## Contenu
+
+<!-- vscode-markdown-toc -->
+1. [Brancher un anneau ou ruban de Leds](#BrancherunanneauourubandeLeds)
+	* 1.1. [Installation de la bibliothèque](#Installationdelabibliothque)
+	* 1.2. [Programmer les leds manuellement](#Programmerlesledsmanuellement)
+	* 1.3. [Utiliser une boucle pour assigner toutes les leds](#Utiliserunebouclepourassignertouteslesleds)
+	* 1.4. [Le mode de couleur HSB](#LemodedecouleurHSB)
+2. [Programmation avancée](#Programmationavance)
+	* 2.1. [Animation radiale](#Animationradiale)
+	* 2.2. [Noise](#Noise)
+3. [Créer des transitions](#Crerdestransitions)
+	* 3.1. [Des structures de codes à savoir utiliser](#Desstructuresdecodessavoirutiliser)
+		* 3.1.1. [Un structure pour stocker les couleurs](#Unstructurepourstockerlescouleurs)
+		* 3.1.2. [Gérer le temps](#Grerletemps)
+		* 3.1.3. [Des fonctions pour réaliser des transitions](#Desfonctionspourraliserdestransitions)
+	* 3.2. [Transitions disponibles](#Transitionsdisponibles)
+	* 3.3. [Transition simple](#Transitionsimple)
+	* 3.4. [Un programme complet de transitions pour un anneau](#Unprogrammecompletdetransitionspourunanneau)
+	* 3.5. [Alterner des transitions de couleurs pleines et des animations pixel par pixel](#Alternerdestransitionsdecouleurspleinesetdesanimationspixelparpixel)
+4. [Brancher et assigner plusieurs anneaux](#Brancheretassignerplusieursanneaux)
+	* 4.1. [Deux anneaux : alimentation par arduino](#Deuxanneaux:alimentationpararduino)
+	* 4.2. [Deux anneaux : exemple complet](#Deuxanneaux:exemplecomplet)
+	* 4.3. [Trois anneaux : alimentation externe](#Troisanneaux:alimentationexterne)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
 
 
 
-## Brancher un anneau ou ruban de Leds
+
+
+##  1. <a name='BrancherunanneauourubandeLeds'></a>Brancher un anneau ou ruban de Leds
 
 Il faut comprendre qu'un anneau de leds consomme du courant et qu'une carte arduino ne peut fournir qu'une certaine quantité de courant, et donc à partir d'un certain nombre il faudra avoir recours à une alimentation externe. Mais nous détaillerons ça plus tard.
 
@@ -22,7 +56,7 @@ Nous pouvons maintenant ouvrir le logiciel [arduino](https://www.arduino.cc/en/s
 
 [**^ Home**](#Contenu)
 
-### Installation de la bibliothèque
+###  1.1. <a name='Installationdelabibliothque'></a>Installation de la bibliothèque
 
 Afin de pouvoir adresser des couleurs aux leds il faut utiliser une bibliothèque logicielle dédiée au type de leds utiliser.
 
@@ -36,7 +70,7 @@ Puis, dans le champ de recherche taper "neopixels" et choisir la bibliothèque *
 
 [**^ Home**](#Contenu)
 
-### Programmer les leds manuellement
+###  1.2. <a name='Programmerlesledsmanuellement'></a>Programmer les leds manuellement
 
 Pour commencer à produire de la lumière le plus simple est d'adresser les leds manuellement en utilisant l'index de la led que nous voulons éclairer. L'index étant un chiffre correspondant au numéro de la led sur l'anneau.
 
@@ -87,7 +121,7 @@ Rien que pour 16 leds ce processus est un peu fastidieu; imaginez alors en avoir
 
 [**^ Home**](#Contenu)
 
-### Utiliser une boucle pour assigner toutes les leds
+###  1.3. <a name='Utiliserunebouclepourassignertouteslesleds'></a>Utiliser une boucle pour assigner toutes les leds
 
 En programmation nous pouvons utiliser une **boucle for** pour répéter une action plusieures fois.
 
@@ -213,7 +247,7 @@ On calcule aussi une variable appelée *b* qui sera le "miroir" de *a* par rappo
 
 [**^ Home**](#Contenu)
 
-### Le mode de couleur HSB
+###  1.4. <a name='LemodedecouleurHSB'></a>Le mode de couleur HSB
 
 Le mode RGB a ses limites, il permet de faire beaucoup de choses, mais il existe un autre mode appelé HSB pour : Hue Saturation Brightness. Cela signifie qu'en lieu et place de spécifier les composantes rouges, vertes et bleues, nous pouvons définir des couleur grâce à leur teinte, leur saturation et leur luminosité.
 
@@ -296,10 +330,10 @@ Avec correction :
 [**^ Home**](#Contenu)
 
 
-## Programmation avancée
+##  2. <a name='Programmationavance'></a>Programmation avancée
 Nous allons maintenant nous concentrer sur des animations un peu plus complexes qui vont assigner des valeurs différentes à chaque led d'un anneau.
 
-### Animation radiale
+###  2.1. <a name='Animationradiale'></a>Animation radiale
 
 Nous allons réaliser cette animation :
 
@@ -337,7 +371,7 @@ donnera toujours un résultat entre 0 et NUMPIXELS ce qui était notre but.
 
 [**^ Home**](#Contenu)
 
-### Noise
+###  2.2. <a name='Noise'></a>Noise
 
 Nous allons maintenant nous intéresser à une autre technique, permettant d'obtenir des rendu plus organiques / ondulants.
 
@@ -429,7 +463,7 @@ Par exemple :
 
 [**^ Home**](#Contenu)
 
-## Créer des transitions
+##  3. <a name='Crerdestransitions'></a>Créer des transitions
 
 Pour créer des transitions nous allons utiliser du code qu'il n'est pas nécessaire de comprendre, mais qu'il est nécessaire de savoir utiliser !
 
@@ -443,9 +477,9 @@ Vous trouverez à la fin de cette section un exemple de code complet et fonction
 
 [**^ Home**](#Contenu)
 
-### Des structures de codes à savoir utiliser
+###  3.1. <a name='Desstructuresdecodessavoirutiliser'></a>Des structures de codes à savoir utiliser
 
-#### Un structure pour stocker les couleurs
+####  3.1.1. <a name='Unstructurepourstockerlescouleurs'></a>Un structure pour stocker les couleurs
 
 Une structure permet de créer un nouveau type de données. Ces données seront des vecteurs à trois composantes car les couleurs ont trois composantes que l'on soit en RGB ou en HSB.
 
@@ -481,7 +515,7 @@ https://color.adobe.com/fr/create/color-wheel
 
 [**^ Home**](#Contenu)
 
-#### Gérer le temps
+####  3.1.2. <a name='Grerletemps'></a>Gérer le temps
 
 Il faudra arriver à gérer les timing des animations pour cela nous allons exprimer tous les temps en millisecondes.
 
@@ -500,7 +534,7 @@ long dur = millis() % totalTime;
 
 [**^ Home**](#Contenu)
 
-#### Des fonctions pour réaliser des transitions
+####  3.1.3. <a name='Desfonctionspourraliserdestransitions'></a>Des fonctions pour réaliser des transitions
 
 Nous allons pouvoir réaliser différents type de transitions, d'une manière générale nous allons utiliser des équations mathématiques qui s'appellent des courbes de easing et qui permettent d'avoir des transitions avec des dynamiques différentes.
 
@@ -673,7 +707,7 @@ void transition_expo_In(Adafruit_NeoPixel *strip, int n, float t, float startT, 
 ```
 
 
-### Transitions disponibles
+###  3.2. <a name='Transitionsdisponibles'></a>Transitions disponibles
 
 Une fois le code ci-dessus copié/collé, vous pouvez réaliser des transitions.
 
@@ -696,7 +730,7 @@ Vous pouvez vous référer à cette page pour comprendre comment fonctionnent le
 [**^ Home**](#Contenu)
 
 
-### Transition simple
+###  3.3. <a name='Transitionsimple'></a>Transition simple
 
 Ici nous avons réalisé des transitions linéaires, mais il est possible d'utiliser des courbes de **easing** qui permettent de gérer des accélération et ralentissements.
 
@@ -720,7 +754,7 @@ La plupart des transitions fonctionnent de cette façon avec ces mêmes argument
 
 [**^ Home**](#Contenu)
 
-### Un programme complet de transitions pour un anneau
+###  3.4. <a name='Unprogrammecompletdetransitionspourunanneau'></a>Un programme complet de transitions pour un anneau
 ![](./assets/transition.gif)
 
 ```c
@@ -933,7 +967,7 @@ void transition_expo_In(Adafruit_NeoPixel *strip, int n, float t, float startT, 
 ```
 [**^ Home**](#Contenu)
 
-### Alterner des transitions de couleurs pleines et des animations pixel par pixel
+###  3.5. <a name='Alternerdestransitionsdecouleurspleinesetdesanimationspixelparpixel'></a>Alterner des transitions de couleurs pleines et des animations pixel par pixel
 
 En vous basant sur la manière dont les transitions ci-dessus sont écrites il devrait être possible d'écrire des animations spécifiques comme vues dans la partie "programmation avancée" !
 
@@ -972,9 +1006,9 @@ void animation_radiale(Adafruit_NeoPixel *strip, int n, float t, float startT, f
 
 [**^ Home**](#Contenu)
 
-## Brancher et assigner plusieurs anneaux
+##  4. <a name='Brancheretassignerplusieursanneaux'></a>Brancher et assigner plusieurs anneaux
 
-### Deux anneaux : alimentation par arduino
+###  4.1. <a name='Deuxanneaux:alimentationpararduino'></a>Deux anneaux : alimentation par arduino
 
 Pour brancher plusieurs anneaux en même temps, vous pouvez suivre le schéma de cablage suivant :
 
@@ -990,7 +1024,7 @@ Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);
 
 Ensuite il nous reste à adapter le reste du code pour afficher des choses sur les deux anneaux en passant le nom de l'anneau aux fonctions d'animation :)
 
-### Deux anneaux : exemple complet
+###  4.2. <a name='Deuxanneaux:exemplecomplet'></a>Deux anneaux : exemple complet
 
 ![](./assets/2rings.gif)
 
@@ -1208,7 +1242,7 @@ void transition_expo_In(Adafruit_NeoPixel *strip, int n, float t, float startT, 
 
 [**^ Home**](#Contenu)
 
-### Trois anneaux : alimentation externe
+###  4.3. <a name='Troisanneaux:alimentationexterne'></a>Trois anneaux : alimentation externe
 
 Pour ajouter une troisième source de lumière il faudra avoir recours à une alimentation externe pour avoir plus de courant disponible. Voici le schéma de branchement qui vous permettra de réaliser le circuit électrique nécessaire.
 
