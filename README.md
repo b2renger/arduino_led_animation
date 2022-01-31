@@ -7,7 +7,7 @@ Cette ressource n'a pas vocation à être une introduction à arduino, vous pour
 
 Il peut-être intéressant de lire l'introduction du lien ci-dessus si vous ne connaissez absolument pas arduino avant de continuer; notament si vous souhaitez découvrir l'anatomie d'une carte arduino, les principes de base des broches d'entrée et sortie, ainsi que le logiciel permettant de programmer les cartes.
 
-[**TL;DR**](#Deuxanneaux:exemplecomplet)
+[**TLDR**](#Deuxanneaux:exemplecomplet)
 
 ## Contenu
 
@@ -39,8 +39,6 @@ Il peut-être intéressant de lire l'introduction du lien ci-dessus si vous ne c
 	autoSave=true
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
-
-
 
 
 
@@ -1055,7 +1053,6 @@ Adafruit_NeoPixel ring1(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800); // nombre de leds, 
 Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);
 
 
-
 void setup() {
 
   ring1.begin();// démarrage de l'anneau
@@ -1075,10 +1072,6 @@ void loop() {
   transition_lin(&ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir);
 
   animation_radiale(&ring2, NUMPIXELS, dur, 0, 5000);
-
-
-
-
 
   ring1.show();
   ring2.show();
