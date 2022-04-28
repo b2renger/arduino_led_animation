@@ -30,9 +30,9 @@ Il peut-être intéressant de lire l'introduction du lien ci-dessus si vous ne c
 	* 3.4. [Un programme complet de transitions pour un anneau](#Unprogrammecompletdetransitionspourunanneau)
 	* 3.5. [Alterner des transitions de couleurs pleines et des animations pixel par pixel](#Alternerdestransitionsdecouleurspleinesetdesanimationspixelparpixel)
 4. [Brancher et assigner plusieurs anneaux](#Brancheretassignerplusieursanneaux)
-	* 4.1. [Deux anneaux : alimentation par arduino](#Deuxanneaux:alimentationpararduino)
-	* 4.2. [Deux anneaux : exemple complet](#Deuxanneaux:exemplecomplet)
-	* 4.3. [Trois anneaux : alimentation externe](#Troisanneaux:alimentationexterne)
+	* 4.1. [Deux anneaux - alimentation par arduino](#Deuxanneaux:alimentationpararduino)
+	* 4.2. [Deux anneaux - exemple complet](#Deuxanneaux:exemplecomplet)
+	* 4.3. [Trois anneaux - alimentation externe](#Troisanneaux:alimentationexterne)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
