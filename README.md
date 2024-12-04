@@ -213,9 +213,11 @@ void transition_expo_In(Adafruit_NeoPixel *strip, int n, float t, float startT, 
   }
 }
 
-void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float x, float y) {
+void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2) {
   if (t > startT && t < endT) {
     int currentTime = map(t, startT, endT, 0, 1000);
+    x += 0.005; // x et y n'incrémentent que pendant l'animation
+    y += 0.001;
     for (int i = 0; i < n; i++) {
       nx = sn.noise(x, i);
       int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
@@ -227,9 +229,11 @@ void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float e
   }
 }
 
-void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float x, float y, float valeur1, float valeur2) {
+void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float valeur1, float valeur2) {
   if (t > startT && t < endT) {
     int currentTime = map(t, startT, endT, 0, 1000);
+    x += 0.005; // x et y n'incrémentent que pendant l'animation
+    y += 0.001;
     for (int i = 0; i < n; i++) {
       nx = sn.noise(x, i);
       float valeur = map(currentTime, 0, 1000, valeur1, valeur2);     //la valeur passe de valeur1 à valeur2 pendant la durée de la transition
@@ -242,9 +246,11 @@ void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, 
   }
 }
 
-void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2, float x, float y) {
+void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2) {
   if (t > startT && t < endT) {
     int currentTime = map(t, startT, endT, 0, 1000);
+    x += 0.005; // x et y n'incrémentent que pendant l'animation
+    y += 0.001;
     for (int i = 0; i < n; i++) {
       nx = sn.noise(x, i);
       int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
@@ -1260,16 +1266,18 @@ void animation_radiale(Adafruit_NeoPixel *strip, int n, float t, float startT, f
 ``` 
 Ici pour réaliser une fonction à partir de l'exemple du Noise (ici chatoiement), où `x` et `y` sont incrémentés lentement dans la `loop()` :
 ```c
-void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float x, float y) {
+void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2) {
   if (t > startT && t < endT) {
     int currentTime = map(t, startT, endT, 0, 1000);
+    x += 0.005; // x et y n'incrémentent que pendant l'animation
+    y += 0.001;
     for (int i = 0; i < n; i++) {
       nx = sn.noise(x, i);
-      int valeur = map(nx * 100, -100, 100, 0, 255); //la valeur des leds chatoie entre 0 et 255
+      int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
       ny = sn.noise(y, i * 2);
-      int teinte = map(ny * 100, -100, 100, h1, h2); //la teinte est entre les valeurs h1 et h2 dans les arguments de la fonction
-      int teinte1 = map(teinte, 0, 360, 0, 65535); // on transforme dans le référentiel led 
-      strip->setPixelColor(i, strip->gamma32(strip->ColorHSV(teinte1, 255, valeur))); // on applique la couleur
+      int teinte = map(ny * 100, -100, 100, h1, h2);                                   //la teinte est entre les valeurs h1 et h2 dans les arguments de la fonction
+      int teinte1 = map(teinte, 0, 360, 0, 65535);                                     // on transforme dans le référentiel led
+      strip->setPixelColor(i, strip->gamma32(strip->ColorHSV(teinte1, 255, valeur)));  // on applique la couleur
     }
   }
 }
@@ -1277,9 +1285,11 @@ void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float e
 
 Ici à partir de la fonction précédente de chatoiement pour réaliser une transition dans la valeur ( = luminosité) totale de l'anneau afin d'éteindre ou d'allumer l'anneau dans le chatoiement :
 ```c
-void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float x, float y, float valeur1, float valeur2) {
+void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float valeur1, float valeur2) {
   if (t > startT && t < endT) {
     int currentTime = map(t, startT, endT, 0, 1000);
+    x += 0.005; // x et y n'incrémentent que pendant l'animation
+    y += 0.001;
     for (int i = 0; i < n; i++) {
       nx = sn.noise(x, i);
       float valeur = map(currentTime, 0, 1000, valeur1, valeur2);     //la valeur passe de valeur1 à valeur2 pendant la durée de la transition
@@ -1291,27 +1301,29 @@ void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, 
     }
   }
 }
+
 ```
 
 Ici à partir de la fonction précédente de chatoiement pour réaliser une transition de la couleur ( = teinte) afin de changer la couleur dans le chatoiement :
 ```c
-void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2, float x, float y) {
+void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2) {
   if (t > startT && t < endT) {
     int currentTime = map(t, startT, endT, 0, 1000);
+    x += 0.005; // x et y n'incrémentent que pendant l'animation
+    y += 0.001;
     for (int i = 0; i < n; i++) {
       nx = sn.noise(x, i);
       int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
       ny = sn.noise(y, i * 2);
-      int h1 = map(currentTime, 0, 1000, h_debut_1, h_fin_1); // on fait progresser h1 la teinte minimale entre le h1 de début et celui de fin
-      int h2 = map(currentTime, 0, 1000, h_debut_2, h_fin_2); // on fait progresser h2 la teinte maximale entre le h2 de début et celui de fin
-      int teinte = map(ny * 100, -100, 100, h1, h2);  //on crée le chatoiement de la couleur entre h1 et h2
+      int h1 = map(currentTime, 0, 1000, h_debut_1, h_fin_1);
+      int h2 = map(currentTime, 0, 1000, h_debut_2, h_fin_2);
+      int teinte = map(ny * 100, -100, 100, h1, h2);  //
       int teinteFinale = map(teinte, 0, 360, 0, 65535);
       strip->setPixelColor(i, strip->gamma32(strip->ColorHSV(teinteFinale, 255, valeur)));  // on applique la couleur avec la valeur qui chatoie et qui passe de valeur1 à valeur2
     }
   }
 }
 ```
-
 
 [**^ Home**](#Contenu)
 

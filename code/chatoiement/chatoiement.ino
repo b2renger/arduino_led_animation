@@ -47,19 +47,19 @@ void loop() {
   long totalTime = 15000;           // temps total de l'animation
   long dur = millis() % totalTime;  // timing
 
-  x += 0.005;
-  y += 0.001;
-  chatoiement_transition(&ring1, NUMPIXELS, dur, 0, 5000, 100, 180, x, y, 0, 255);
-  chatoiement(&ring1, NUMPIXELS, dur, 5000, 8000, 100, 180, x, y);
-  chatoiement_color(&ring1, NUMPIXELS, dur, 8000, 11000, 100, 180, 0, 10, x, y);
-  chatoiement_transition(&ring1, NUMPIXELS, dur, 11000, 15000, 0, 10, x, y, 255, 0);
+  chatoiement_valeur(&ring1, NUMPIXELS, dur, 0, 5000, 100, 180, 0, 255);
+  chatoiement(&ring1, NUMPIXELS, dur, 5000, 8000, 100, 180);
+  chatoiement_color(&ring1, NUMPIXELS, dur, 8000, 11000, 100, 180, 0, 10);
+  chatoiement_valeur(&ring1, NUMPIXELS, dur, 11000, 15000, 0, 10, 255, 0);
 
   ring1.show();
 }
 
-void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float x, float y) {
+void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2) {
   if (t > startT && t < endT) {
     int currentTime = map(t, startT, endT, 0, 1000);
+    x += 0.005;
+    y += 0.001;
     for (int i = 0; i < n; i++) {
       nx = sn.noise(x, i);
       int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
@@ -71,9 +71,11 @@ void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float e
   }
 }
 
-void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float x, float y, float valeur1, float valeur2) {
+void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float valeur1, float valeur2) {
   if (t > startT && t < endT) {
     int currentTime = map(t, startT, endT, 0, 1000);
+    x += 0.005;
+    y += 0.001;
     for (int i = 0; i < n; i++) {
       nx = sn.noise(x, i);
       float valeur = map(currentTime, 0, 1000, valeur1, valeur2);     //la valeur passe de valeur1 à valeur2 pendant la durée de la transition
@@ -86,9 +88,12 @@ void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, 
   }
 }
 
-void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2, float x, float y) {
+void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2) {
   if (t > startT && t < endT) {
     int currentTime = map(t, startT, endT, 0, 1000);
+
+    x += 0.005;
+    y += 0.001;
     for (int i = 0; i < n; i++) {
       nx = sn.noise(x, i);
       int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
