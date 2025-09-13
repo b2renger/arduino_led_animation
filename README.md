@@ -1,4 +1,6 @@
 
+🇬🇧 [english translation](readme-en.md)
+
 A crash course focused on led animation with arduino for designers
 
 Dans ce document nous allons nous concentrer sur la création d'animations basées sur une timeline qui se joueront sur des leds de type neopixels; 
