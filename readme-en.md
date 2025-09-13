@@ -1,3 +1,5 @@
+🇫🇷 [traduction française](README.md)
+
 A crash course focused on led animation with arduino for designers
 
 In this document we will focus on creating timeline-based animations that will play on neopixel-type LEDs;
