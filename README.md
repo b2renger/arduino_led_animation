@@ -14,11 +14,13 @@ Il peut-être intéressant de lire l'introduction du lien ci-dessus si vous ne c
   <summary><strong>TL;DR</strong> </summary>
   - brancher un anneau ou un ruban de 16 leds en utilisant la pin 6 pour le "data in"
   - avoir arduino et la bibliothèque neopixel d'adafruit installée
+  - le code pour brancher et controller un deuxième anneau est déjà écrit mais commenté
 
-  ```c
+```c
+/////////////////////////////////////////////////////////////////////
+// Les parties à n pas modifier
 // la bibliothèque pour les leds
 #include <Adafruit_NeoPixel.h>
-
 // la structure de données pour stocker les couleurs
 struct Vec3 {
   float c1;
@@ -29,6 +31,7 @@ struct Vec3 {
   Vec3(const float c1, const float c2, const float c3)
     : c1(c1), c2(c2), c3(c3) {}
 };
+// les types de dynamiques disponibles pour vos transitions
 // transitions : https://easings.net/
 int LIN = 0;
 int SIN_IN_OUT = 1;
@@ -43,21 +46,21 @@ int EXPO_OUT = 9;
 
 
 ////////////////////////////////////////////////////////////////////////
+// Les parties que vous devez modifier
 // quelques définitions de couleurs
+// vous pouvez en ajouter d'autres au format RGB
 Vec3 bleu = Vec3(0, 200, 255);
 Vec3 orange = Vec3(255, 105, 0);
 Vec3 noir = Vec3(0, 0, 0);
 Vec3 rose = Vec3(220, 0, 120);
-
 // initialisation des leds
 #define NUMPIXELS 16
 Adafruit_NeoPixel ring1(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
-Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
+//Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
 
 void setup() {
-
   ring1.begin();  // démarrage de l'anneau
-  ring2.begin();  // démarrage de l'anneau
+  //ring2.begin();  // démarrage de l'anneau
 }
 
 void loop() {
@@ -65,26 +68,27 @@ void loop() {
   long totalTime = 5000;            // temps total de l'animation
   long dur = millis() % totalTime;  // timing
 
-  // créer des transitions à vous de jouer
-  
-  transition(LIN, &ring1, NUMPIXELS, dur, 0, 2500, noir, bleu);
-  transition(LIN, &ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir);
+  // créer des transitions à vous de jouer !
+  transition(LIN, &ring1, NUMPIXELS, dur, 0, 2500, noir, bleu); // du noir au bleu entre la seconde 0 et 2,5 secondes
+  transition(LIN, &ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir); // du bleu au noit entre la seconde 2,5 et 5 secondes
 
-  transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 0, 2500, noir, bleu);
-  transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 2500, 5000, bleu, noir);
+  // ou avec une dynamique un peu différentes
+  //transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 0, 2500, noir, bleu);
+  //transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 2500, 5000, bleu, noir);
   
-
+  // ou
   //animation_radiale(LIN, &ring1, NUMPIXELS, dur, 0, 5000);
   //animation_radiale(SIN_OUT, &ring2, NUMPIXELS, dur, 0, 5000);
 
 
   ring1.show();
-  ring2.show();
+  //ring2.show();
 }
 
 
 
 // toutes les transitions disponibles ci-dessous
+// vous pouvez les utiliser dans le loop, ne les modifiez que si vous comprenez
 
 // pas de transition : une couleur fixe pendant un durée
 void fixed_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 c) {
@@ -96,7 +100,7 @@ void fixed_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float e
   }
 }
 
-// transition linéaire d'une couleur à une autre pendant une durée donnée
+// transition d'une couleur à une autre pendant une durée donnée avec une dynamique donnée
 void transition(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
   if (t > startT && t < endT) {
     float currentTime = easing(easeType,t,startT,endT);
@@ -109,12 +113,13 @@ void transition(int easeType, Adafruit_NeoPixel *strip, int n, float t, float st
   }
 }
 
-void animation_radiale(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT) {
+// animation circulaire 
+void animation_radiale(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float startH, float endH) {
   if (t > startT && t < endT) {
     int currentTime = easing(easeType,t,startT,endT)*1000;
     int ledsOffset = map(currentTime, 0, 1000, 0, n * 8);  // 8 représenter le nombre de tours pendant la durée de l'animation
     for (int i = 0; i < n; i++) {
-      float teinteHSB = map(i, 0, n, 100, 235);                                                           // on veut une teinte entre 100 et 235 pour notre dégradé
+      float teinteHSB = map(i, 0, n, startH, endH);                                                           // on veut une teinte entre 100 et 235 pour notre dégradé
       float teinteLeds = map(teinteHSB, 0, 360, 0, 65535);                                                // on transforme dans le référentiel led
       strip->setPixelColor((i + ledsOffset) % n, strip->gamma32(strip->ColorHSV(teinteLeds, 255, 255)));  // on applique la couleur
     }
@@ -154,63 +159,7 @@ float easing(int easeType, int tt, int startT, int endT) {
   }
   return t;
 }
-
-<<<<<<< HEAD
-=======
-void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2) {
-  if (t > startT && t < endT) {
-    int currentTime = map(t, startT, endT, 0, 1000);
-    x += 0.005; // x et y n'incrémentent que pendant l'animation
-    y += 0.001;
-    for (int i = 0; i < n; i++) {
-      nx = sn.noise(x, i);
-      int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
-      ny = sn.noise(y, i * 2);
-      int teinte = map(ny * 100, -100, 100, h1, h2);                                   //la teinte est entre les valeurs h1 et h2 dans les arguments de la fonction
-      int teinte1 = map(teinte, 0, 360, 0, 65535);                                     // on transforme dans le référentiel led
-      strip->setPixelColor(i, strip->gamma32(strip->ColorHSV(teinte1, 255, valeur)));  // on applique la couleur
-    }
-  }
-}
-
-void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float valeur1, float valeur2) {
-  if (t > startT && t < endT) {
-    int currentTime = map(t, startT, endT, 0, 1000);
-    x += 0.005; // x et y n'incrémentent que pendant l'animation
-    y += 0.001;
-    for (int i = 0; i < n; i++) {
-      nx = sn.noise(x, i);
-      float valeur = map(currentTime, 0, 1000, valeur1, valeur2);     //la valeur passe de valeur1 à valeur2 pendant la durée de la transition
-      float noiseValeur = map(nx * 100, -100, 100, 0, 1000) / 1000.;  //on crée un noise entre 0 et 1 pour la valeur finale
-      ny = sn.noise(y, i * 2);
-      int teinte = map(ny * 100, -100, 100, h1, h2);  //la teinte est entre les valeurs h1 et h2 dans les arguments de la fonction
-      int teinte1 = map(teinte, 0, 360, 0, 65535);
-      strip->setPixelColor(i, strip->gamma32(strip->ColorHSV(teinte1, 255, noiseValeur * valeur)));  // on applique la couleur avec la valeur qui chatoie et qui passe de valeur1 à valeur2
-    }
-  }
-}
-
-void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2) {
-  if (t > startT && t < endT) {
-    int currentTime = map(t, startT, endT, 0, 1000);
-    x += 0.005; // x et y n'incrémentent que pendant l'animation
-    y += 0.001;
-    for (int i = 0; i < n; i++) {
-      nx = sn.noise(x, i);
-      int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
-      ny = sn.noise(y, i * 2);
-      int h1 = map(currentTime, 0, 1000, h_debut_1, h_fin_1);
-      int h2 = map(currentTime, 0, 1000, h_debut_2, h_fin_2);
-      int teinte = map(ny * 100, -100, 100, h1, h2);  //
-      int teinteFinale = map(teinte, 0, 360, 0, 65535);
-      strip->setPixelColor(i, strip->gamma32(strip->ColorHSV(teinteFinale, 255, valeur)));  // on applique la couleur avec la valeur qui chatoie et qui passe de valeur1 à valeur2
-    }
-  }
-}
-
->>>>>>> a228828b1cb842b55d2af5c139be7dc3fdbe562f
-``` 
-  
+```
 
 </details>
 
@@ -236,9 +185,9 @@ void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, f
 	* 3.4. [Un programme complet de transitions pour un anneau](#Unprogrammecompletdetransitionspourunanneau)
 	* 3.5. [Alterner des transitions de couleurs pleines et des animations pixel par pixel](#Alternerdestransitionsdecouleurspleinesetdesanimationspixelparpixel)
 4. [Brancher et assigner plusieurs anneaux](#Brancheretassignerplusieursanneaux)
-	* 4.1. [Deux anneaux - alimentation par arduino](#Deuxanneaux:alimentationpararduino)
-	* 4.2. [Deux anneaux - exemple complet](#Deuxanneaux:exemplecomplet)
-	* 4.3. [Trois anneaux - alimentation externe](#Troisanneaux:alimentationexterne)
+	* 4.1. [Deux anneaux - alimentation par arduino](#Deuxanneauxalimentationpararduino)
+	* 4.2. [Deux anneaux - exemple complet](#Deuxanneauxexemplecomplet)
+	* 4.3. [Trois anneaux - alimentation externe](#Troisanneauxalimentationexterne)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -1274,7 +1223,7 @@ void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, f
 
 ##  4. <a name='Brancheretassignerplusieursanneaux'></a>Brancher et assigner plusieurs anneaux
 
-###  4.1. <a name='Deuxanneaux:alimentationpararduino'></a>Deux anneaux : alimentation par arduino
+###  4.1. <a name='Deuxanneauxalimentationpararduino'></a>Deux anneaux : alimentation par arduino
 
 Pour brancher plusieurs anneaux en même temps, vous pouvez suivre le schéma de cablage suivant :
 
@@ -1290,14 +1239,15 @@ Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);
 
 Ensuite il nous reste à adapter le reste du code pour afficher des choses sur les deux anneaux en passant le nom de l'anneau aux fonctions d'animation :)
 
-###  4.2. <a name='Deuxanneaux:exemplecomplet'></a>Deux anneaux : exemple complet
+###  4.2. <a name='Deuxanneauxexemplecomplet'></a>Deux anneaux : exemple complet
 
 ![](./assets/2rings.gif)
 
 ```c
+/////////////////////////////////////////////////////////////////////
+// Les parties à n pas modifier
 // la bibliothèque pour les leds
 #include <Adafruit_NeoPixel.h>
-
 // la structure de données pour stocker les couleurs
 struct Vec3 {
   float c1;
@@ -1308,6 +1258,7 @@ struct Vec3 {
   Vec3(const float c1, const float c2, const float c3)
     : c1(c1), c2(c2), c3(c3) {}
 };
+// les types de dynamiques disponibles pour vos transitions
 // transitions : https://easings.net/
 int LIN = 0;
 int SIN_IN_OUT = 1;
@@ -1322,21 +1273,21 @@ int EXPO_OUT = 9;
 
 
 ////////////////////////////////////////////////////////////////////////
+// Les parties que vous devez modifier
 // quelques définitions de couleurs
+// vous pouvez en ajouter d'autres au format RGB
 Vec3 bleu = Vec3(0, 200, 255);
 Vec3 orange = Vec3(255, 105, 0);
 Vec3 noir = Vec3(0, 0, 0);
 Vec3 rose = Vec3(220, 0, 120);
-
 // initialisation des leds
 #define NUMPIXELS 16
 Adafruit_NeoPixel ring1(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
-Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
+//Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
 
 void setup() {
-
   ring1.begin();  // démarrage de l'anneau
-  ring2.begin();  // démarrage de l'anneau
+  //ring2.begin();  // démarrage de l'anneau
 }
 
 void loop() {
@@ -1344,26 +1295,27 @@ void loop() {
   long totalTime = 5000;            // temps total de l'animation
   long dur = millis() % totalTime;  // timing
 
-  // créer des transitions à vous de jouer
-  
-  transition(LIN, &ring1, NUMPIXELS, dur, 0, 2500, noir, bleu);
-  transition(LIN, &ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir);
+  // créer des transitions à vous de jouer !
+  transition(LIN, &ring1, NUMPIXELS, dur, 0, 2500, noir, bleu); // du noir au bleu entre la seconde 0 et 2,5 secondes
+  transition(LIN, &ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir); // du bleu au noit entre la seconde 2,5 et 5 secondes
 
-  transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 0, 2500, noir, bleu);
-  transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 2500, 5000, bleu, noir);
+  // ou avec une dynamique un peu différentes
+  //transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 0, 2500, noir, bleu);
+  //transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 2500, 5000, bleu, noir);
   
-
+  // ou
   //animation_radiale(LIN, &ring1, NUMPIXELS, dur, 0, 5000);
   //animation_radiale(SIN_OUT, &ring2, NUMPIXELS, dur, 0, 5000);
 
 
   ring1.show();
-  ring2.show();
+  //ring2.show();
 }
 
 
 
 // toutes les transitions disponibles ci-dessous
+// vous pouvez les utiliser dans le loop, ne les modifiez que si vous comprenez
 
 // pas de transition : une couleur fixe pendant un durée
 void fixed_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 c) {
@@ -1375,7 +1327,7 @@ void fixed_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float e
   }
 }
 
-// transition linéaire d'une couleur à une autre pendant une durée donnée
+// transition d'une couleur à une autre pendant une durée donnée avec une dynamique donnée
 void transition(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
   if (t > startT && t < endT) {
     float currentTime = easing(easeType,t,startT,endT);
@@ -1388,12 +1340,13 @@ void transition(int easeType, Adafruit_NeoPixel *strip, int n, float t, float st
   }
 }
 
-void animation_radiale(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT) {
+// animation circulaire 
+void animation_radiale(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float startH, float endH) {
   if (t > startT && t < endT) {
     int currentTime = easing(easeType,t,startT,endT)*1000;
     int ledsOffset = map(currentTime, 0, 1000, 0, n * 8);  // 8 représenter le nombre de tours pendant la durée de l'animation
     for (int i = 0; i < n; i++) {
-      float teinteHSB = map(i, 0, n, 100, 235);                                                           // on veut une teinte entre 100 et 235 pour notre dégradé
+      float teinteHSB = map(i, 0, n, startH, endH);                                                           // on veut une teinte entre 100 et 235 pour notre dégradé
       float teinteLeds = map(teinteHSB, 0, 360, 0, 65535);                                                // on transforme dans le référentiel led
       strip->setPixelColor((i + ledsOffset) % n, strip->gamma32(strip->ColorHSV(teinteLeds, 255, 255)));  // on applique la couleur
     }
@@ -1438,7 +1391,7 @@ float easing(int easeType, int tt, int startT, int endT) {
 
 [**^ Home**](#Contenu)
 
-###  4.3. <a name='Troisanneaux:alimentationexterne'></a>Trois anneaux : alimentation externe
+###  4.3. <a name='Troisanneauxalimentationexterne'></a>Trois anneaux : alimentation externe
 
 Pour ajouter une troisième source de lumière il faudra avoir recours à une alimentation externe pour avoir plus de courant disponible. Voici le schéma de branchement qui vous permettra de réaliser le circuit électrique nécessaire.
 
