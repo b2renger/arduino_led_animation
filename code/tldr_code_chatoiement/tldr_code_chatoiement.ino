@@ -121,7 +121,7 @@ void animation_radiale(int easeType, Adafruit_NeoPixel *strip, int n, float t, f
 }
 
 // chatoiements
-void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2) {
+void chatoiement(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2) {
   if (t > startT && t < endT) {
     int currentTime = easing(easeType,t,startT,endT)*1000;
     x += 0.005; // x et y n'incrémentent que pendant l'animation
@@ -137,7 +137,7 @@ void chatoiement(Adafruit_NeoPixel *strip, int n, float t, float startT, float e
   }
 }
 // réaliser une transition dans la valeur ( = luminosité) totale de l'anneau afin d'éteindre ou d'allumer l'anneau dans le chatoiement :
-void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float valeur1, float valeur2) {
+void chatoiement_valeur(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float valeur1, float valeur2) {
   if (t > startT && t < endT) {
     int currentTime = easing(easeType,t,startT,endT)*1000;
     x += 0.005; // x et y n'incrémentent que pendant l'animation
@@ -154,7 +154,7 @@ void chatoiement_valeur(Adafruit_NeoPixel *strip, int n, float t, float startT, 
   }
 }
 // pour réaliser une transition de la couleur ( = teinte) afin de changer la couleur dans le chatoiement :
-void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2) {
+void chatoiement_color(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2) {
   if (t > startT && t < endT) {
     int currentTime = easing(easeType,t,startT,endT)*1000;
     x += 0.005; // x et y n'incrémentent que pendant l'animation
