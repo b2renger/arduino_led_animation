@@ -42,14 +42,15 @@ Vec3 bleu = Vec3(0, 200, 255);
 Vec3 orange = Vec3(255, 105, 0);
 Vec3 noir = Vec3(0, 0, 0);
 Vec3 rose = Vec3(220, 0, 120);
+Vec3 rouge = Vec3(255, 0 , 0);
 // initialisation des leds
 #define NUMPIXELS 16
 Adafruit_NeoPixel ring1(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
-//Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
+Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
 
 void setup() {
   ring1.begin();  // démarrage de l'anneau
-  //ring2.begin();  // démarrage de l'anneau
+  ring2.begin();  // démarrage de l'anneau
 
    // obtenir des valeurs aléatoires au lancement du programme
   x= analogRead(0)/10.;
@@ -63,8 +64,8 @@ void loop() {
   long dur = millis() % totalTime;  // timing
 
   // créer des transitions à vous de jouer !
-  transition(LIN, &ring1, NUMPIXELS, dur, 0, 2500, noir, bleu); // du noir au bleu entre la seconde 0 et 2,5 secondes
-  transition(LIN, &ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir); // du bleu au noit entre la seconde 2,5 et 5 secondes
+  //transition(LIN, &ring1, NUMPIXELS, dur, 0, 2500, noir, bleu); // du noir au bleu entre la seconde 0 et 2,5 secondes
+  //transition(LIN, &ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir); // du bleu au noit entre la seconde 2,5 et 5 secondes
 
   // ou avec une dynamique un peu différentes
   //transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 0, 2500, noir, bleu);
@@ -74,9 +75,14 @@ void loop() {
   //animation_radiale(LIN, &ring1, NUMPIXELS, dur, 0, 5000);
   //animation_radiale(SIN_OUT, &ring2, NUMPIXELS, dur, 0, 5000);
 
+  chatoiement_valeur(SIN_OUT, &ring1, NUMPIXELS, dur, 0, 2500, 160, 360, 0 , 255);
+  chatoiement_valeur(SIN_IN, &ring1, NUMPIXELS, dur, 2500, 5000, 360, 160, 255, 0);
+
+  chatoiement_color(CIRC_IN_OUT, &ring2, NUMPIXELS, dur, 0, 2500, 160, 255, 0, 60);
+  chatoiement_color(CIRC_IN_OUT, &ring2, NUMPIXELS, dur, 2500, 5000,0,60, 160, 255);
 
   ring1.show();
-  //ring2.show();
+  ring2.show();
 }
 
 
