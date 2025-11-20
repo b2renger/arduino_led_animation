@@ -128,7 +128,7 @@ void animation_radiale(int easeType, Adafruit_NeoPixel *strip, int n, float t, f
 
 
 // fonction pour gérer les dynamiques
-float easing(int easeType, int tt, int startT, int endT) {
+float easing(int easeType, uint32_t tt, uint32_t startT, uint32_t endT) {
   float t = 0;
   float currentTime = map(tt, startT, endT, 0, 1000) / 1000.;
   if (easeType == 0) {  // lin
@@ -346,7 +346,7 @@ void chatoiement_color(int easeType, Adafruit_NeoPixel *strip, int n, float t, f
 
 
 // fonction pour gérer les dynamiques
-float easing(int easeType, int tt, int startT, int endT) {
+float easing(int easeType, uint32_t tt, uint32_t startT, uint32_t endT) {
   float t = 0;
   float currentTime = map(tt, startT, endT, 0, 1000) / 1000.;
   if (easeType == 0) {  // lin
@@ -1573,7 +1573,7 @@ void animation_radiale(int easeType, Adafruit_NeoPixel *strip, int n, float t, f
 
 
 // fonction pour gérer les dynamiques
-float easing(int easeType, int tt, int startT, int endT) {
+float easing(int easeType, uint32_t tt, uint32_t startT, uint32_t endT) {
   float t = 0;
   float currentTime = map(tt, startT, endT, 0, 1000) / 1000.;
   if (easeType == 0) {  // lin
