@@ -134,9 +134,9 @@ float easing(int easeType, uint32_t tt, uint32_t startT, uint32_t endT) {
         : currentTime < 0.5 ? pow(2, 20 * currentTime - 10) / 2
                             : (2 - pow(2, -20 * currentTime + 10)) / 2;
   } else if (easeType == 8) {  // expoIn
-    t = currentTime == 1 ? 1 : 1 - pow(2, -10 * currentTime);
-  } else if (easeType == 9) {  // expoOut
     t = currentTime == 0 ? 0 : pow(2, 10 * currentTime - 10);
+  } else if (easeType == 9) {  // expoOut
+    t = currentTime == 1 ? 1 : 1 - pow(2, -10 * currentTime);
   }
   return t;
 }

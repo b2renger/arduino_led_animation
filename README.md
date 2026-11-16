@@ -10,376 +10,47 @@ Cette ressource n'a pas vocation à être une introduction à arduino, vous pour
 Il peut-être intéressant de lire l'introduction du lien ci-dessus si vous ne connaissez absolument pas arduino avant de continuer; notament si vous souhaitez découvrir l'anatomie d'une carte arduino, les principes de base des broches d'entrée et sortie, ainsi que le logiciel permettant de programmer les cartes.
 
 
-<details>
-  <summary><strong>TL;DR</strong> </summary>
-  - brancher un anneau ou un ruban de 16 leds en utilisant la pin 6 pour le "data in"
-  - avoir arduino et la bibliothèque neopixel d'adafruit installée
-  - le code pour brancher et controller un deuxième anneau est déjà écrit mais commenté
+## TL;DR
+
+- brancher un anneau ou un ruban de 16 leds en utilisant la pin 6 pour le "data in"
+- installer la bibliothèque *Adafruit NeoPixel* depuis le gestionnaire de bibliothèques d'arduino
+- télécharger ce dépôt en zip (bouton vert *Code* puis *Download ZIP*) et l'ajouter dans arduino par le menu *Croquis* -> *Inclure une bibliothèque* -> *Ajouter la bibliothèque .ZIP*
+- ouvrir un exemple depuis le menu *Fichier* -> *Exemples* -> *LedAnimation* : ils sont commentés ligne par ligne et numérotés du plus simple au plus avancé
 
 ```c
-/////////////////////////////////////////////////////////////////////
-// Les parties à n pas modifier
-// la bibliothèque pour les leds
-#include <Adafruit_NeoPixel.h>
-// la structure de données pour stocker les couleurs
-struct Vec3 {
-  float c1;
-  float c2;
-  float c3;
-  Vec3()
-    : c1(0), c2(0), c3(0) {}
-  Vec3(const float c1, const float c2, const float c3)
-    : c1(c1), c2(c2), c3(c3) {}
-};
-// les types de dynamiques disponibles pour vos transitions
-// transitions : https://easings.net/
-int LIN = 0;
-int SIN_IN_OUT = 1;
-int SIN_IN = 2;
-int SIN_OUT = 3;
-int CIRC_IN_OUT = 4;
-int CIRC_IN = 5;
-int CIRC_OUT = 6;
-int EXPO_IN_OUT = 7;
-int EXPO_IN = 8;
-int EXPO_OUT = 9;
+#include <LedAnimation.h>
 
-
-////////////////////////////////////////////////////////////////////////
-// Les parties que vous devez modifier
 // quelques définitions de couleurs
 // vous pouvez en ajouter d'autres au format RGB
 Vec3 bleu = Vec3(0, 200, 255);
-Vec3 orange = Vec3(255, 105, 0);
 Vec3 noir = Vec3(0, 0, 0);
-Vec3 rose = Vec3(220, 0, 120);
-// initialisation des leds
-#define NUMPIXELS 16
-Adafruit_NeoPixel ring1(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
-//Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
+
+LedRing ring1(16, 6);  // nombre de leds, broche arduino
+//LedRing ring2(16, 9);
 
 void setup() {
   ring1.begin();  // démarrage de l'anneau
-  //ring2.begin();  // démarrage de l'anneau
 }
 
 void loop() {
-  // gestion du temps
-  long totalTime = 5000;            // temps total de l'animation
-  long dur = millis() % totalTime;  // timing
+  timeline(5000);  // temps total de l'animation : elle boucle toutes les 5 secondes
 
   // créer des transitions à vous de jouer !
-  transition(LIN, &ring1, NUMPIXELS, dur, 0, 2500, noir, bleu); // du noir au bleu entre la seconde 0 et 2,5 secondes
-  transition(LIN, &ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir); // du bleu au noit entre la seconde 2,5 et 5 secondes
+  ring1.transition(noir, bleu).from(0).to(2500);                   // du noir au bleu entre 0 et 2,5 secondes
+  ring1.transition(bleu, noir).from(2500).to(5000).ease(SIN_OUT);  // retour au noir avec une dynamique différente
 
-  // ou avec une dynamique un peu différentes
-  //transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 0, 2500, noir, bleu);
-  //transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 2500, 5000, bleu, noir);
-  
   // ou
-  //animation_radiale(LIN, &ring1, NUMPIXELS, dur, 0, 5000);
-  //animation_radiale(SIN_OUT, &ring2, NUMPIXELS, dur, 0, 5000);
-
+  //ring1.animation_radiale();
+  //ring1.chatoiement().hue(160, 270);
+  //ring1.sunrise(noir, bleu).leds(FIRST_HALF);
 
   ring1.show();
-  //ring2.show();
-}
-
-
-
-// toutes les transitions disponibles ci-dessous
-// vous pouvez les utiliser dans le loop, ne les modifiez que si vous comprenez
-
-// pas de transition : une couleur fixe pendant un durée
-void fixed_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 c) {
-  if (t > startT && t < endT) {
-    int currentTime = map(t, startT, endT, 0, 1000);
-    for (int i = 0; i < n; i++) {
-      strip->setPixelColor(i, strip->Color(c.c1, c.c2, c.c3));
-    }
-  }
-}
-
-// transition d'une couleur à une autre pendant une durée donnée avec une dynamique donnée
-void transition(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
-  if (t > startT && t < endT) {
-    float currentTime = easing(easeType,t,startT,endT);
-    float r = map(currentTime * 1000, 0, 1000, startC.c1, endC.c1);
-    float g = map(currentTime * 1000, 0, 1000, startC.c2, endC.c2);
-    float b = map(currentTime * 1000, 0, 1000, startC.c3, endC.c3);
-    for (int i = 0; i < n; i++) {
-      strip->setPixelColor(i, strip->gamma32(strip->Color(r, g, b)));
-    }
-  }
-}
-
-// animation circulaire 
-void animation_radiale(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float startH, float endH) {
-  if (t > startT && t < endT) {
-    int currentTime = easing(easeType,t,startT,endT)*1000;
-    int ledsOffset = map(currentTime, 0, 1000, 0, n * 8);  // 8 représenter le nombre de tours pendant la durée de l'animation
-    for (int i = 0; i < n; i++) {
-      float teinteHSB = map(i, 0, n, startH, endH);                                                           // on veut une teinte entre 100 et 235 pour notre dégradé
-      float teinteLeds = map(teinteHSB, 0, 360, 0, 65535);                                                // on transforme dans le référentiel led
-      strip->setPixelColor((i + ledsOffset) % n, strip->gamma32(strip->ColorHSV(teinteLeds, 255, 255)));  // on applique la couleur
-    }
-  }
-}
-
-
-// fonction pour gérer les dynamiques
-float easing(int easeType, uint32_t tt, uint32_t startT, uint32_t endT) {
-  float t = 0;
-  float currentTime = map(tt, startT, endT, 0, 1000) / 1000.;
-  if (easeType == 0) {  // lin
-    t = currentTime;
-  } else if (easeType == 1) {  // sinInOut
-    t = -(cos(PI * currentTime) - 1) / 2.;
-  } else if (easeType == 2) {  // sinIn
-    t = 1 - cos((currentTime * PI) / 2.);
-  } else if (easeType == 3) {  // sinOut
-    t = sin((currentTime * PI) / 2);
-  } else if (easeType == 4) {  // circInOut
-    t = currentTime < 0.5 ? (1 - sqrt(1 - pow(2 * currentTime, 2))) / 2 : (sqrt(1 - pow(-2 * currentTime + 2, 2)) + 1) / 2;
-  } else if (easeType == 5) {  // circIn
-    t = 1 - sqrt(1 - pow(currentTime, 2));
-  } else if (easeType == 6) {  // circOut
-    t = sqrt(1 - pow(currentTime - 1, 2));
-  } else if (easeType == 7) {  // expo
-    t = currentTime == 0
-          ? 0
-        : currentTime == 1
-          ? 1
-        : currentTime < 0.5 ? pow(2, 20 * currentTime - 10) / 2
-                            : (2 - pow(2, -20 * currentTime + 10)) / 2;
-  } else if (easeType == 8) {  // expoIn
-    t = currentTime == 1 ? 1 : 1 - pow(2, -10 * currentTime);
-  } else if (easeType == 9) {  // expoOut
-    t = currentTime == 0 ? 0 : pow(2, 10 * currentTime - 10);
-  }
-  return t;
 }
 ```
 
-Si vous avez aussi installé la [bibliothèque simplex noise](https://github.com/jshaw/SimplexNoise) et que vous avez déjà fait du "chatoiement", l'exemple complet est ici :
+On enchaîne des fonctions séparées par des points : tout ce que vous ne précisez pas prend une valeur par défaut. Toutes les possibilités sont listées dans la partie [5. La bibliothèque LedAnimation](#LabibliothqueLedAnimation).
 
-```c
-/////////////////////////////////////////////////////////////////////
-// Les parties à n pas modifier
-// la bibliothèque pour les leds
-#include <Adafruit_NeoPixel.h>
-// la structure de données pour stocker les couleurs
-struct Vec3 {
-  float c1;
-  float c2;
-  float c3;
-  Vec3()
-    : c1(0), c2(0), c3(0) {}
-  Vec3(const float c1, const float c2, const float c3)
-    : c1(c1), c2(c2), c3(c3) {}
-};
-// les types de dynamiques disponibles pour vos transitions
-// transitions : https://easings.net/
-int LIN = 0;
-int SIN_IN_OUT = 1;
-int SIN_IN = 2;
-int SIN_OUT = 3;
-int CIRC_IN_OUT = 4;
-int CIRC_IN = 5;
-int CIRC_OUT = 6;
-int EXPO_IN_OUT = 7;
-int EXPO_IN = 8;
-int EXPO_OUT = 9;
-
-////////////////////////////////////////////////////////////////////////
-// Noise !
-#include <SimplexNoise.h>
-SimplexNoise sn;
-double nx;
-double x = 0.0;
-double ny;
-double y = 0.0;
-
-////////////////////////////////////////////////////////////////////////
-// Les parties que vous devez modifier
-// quelques définitions de couleurs
-// vous pouvez en ajouter d'autres au format RGB
-Vec3 bleu = Vec3(0, 200, 255);
-Vec3 orange = Vec3(255, 105, 0);
-Vec3 noir = Vec3(0, 0, 0);
-Vec3 rose = Vec3(220, 0, 120);
-Vec3 rouge = Vec3(255, 0 , 0);
-// initialisation des leds
-#define NUMPIXELS 16
-Adafruit_NeoPixel ring1(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
-//Adafruit_NeoPixel ring2(NUMPIXELS, 9, NEO_GRB + NEO_KHZ800);  // nombre de leds, broche arduino, type de leds
-
-void setup() {
-  ring1.begin();  // démarrage de l'anneau
-  //ring2.begin();  // démarrage de l'anneau
-
-   // obtenir des valeurs aléatoires au lancement du programme
-  x= analogRead(0)/10.;
-  y= analogRead(2)/ 10.;
-}
-
-void loop() {
-
-  // gestion du temps
-  long totalTime = 5000;            // temps total de l'animation
-  long dur = millis() % totalTime;  // timing
-
-  // créer des transitions à vous de jouer !
-  //transition(LIN, &ring1, NUMPIXELS, dur, 0, 2500, noir, bleu); // du noir au bleu entre la seconde 0 et 2,5 secondes
-  //transition(LIN, &ring1, NUMPIXELS, dur, 2500, 5000, bleu, noir); // du bleu au noit entre la seconde 2,5 et 5 secondes
-
-  // ou avec une dynamique un peu différentes
-  //transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 0, 2500, noir, bleu);
-  //transition(SIN_IN_OUT, &ring2, NUMPIXELS, dur, 2500, 5000, bleu, noir);
-  
-  // ou
-  //animation_radiale(LIN, &ring1, NUMPIXELS, dur, 0, 5000);
-  //animation_radiale(SIN_OUT, &ring2, NUMPIXELS, dur, 0, 5000);
-
-  chatoiement_valeur(SIN_OUT, &ring1, NUMPIXELS, dur, 0, 2500, 160, 360, 0 , 255);
-  chatoiement_valeur(SIN_IN, &ring1, NUMPIXELS, dur, 2500, 5000, 360, 160, 255, 0);
-
-  //chatoiement_color(CIRC_IN_OUT, &ring2, NUMPIXELS, dur, 0, 2500, 160, 255, 0, 60);
-  // chatoiement_color(CIRC_IN_OUT, &ring2, NUMPIXELS, dur, 2500, 5000,0,60, 160, 255);
-
-  ring1.show();
-  //ring2.show();
-}
-
-
-
-// toutes les transitions disponibles ci-dessous
-// vous pouvez les utiliser dans le loop, ne les modifiez que si vous comprenez
-
-// pas de transition : une couleur fixe pendant un durée
-void fixed_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 c) {
-  if (t > startT && t < endT) {
-    int currentTime = map(t, startT, endT, 0, 1000);
-    for (int i = 0; i < n; i++) {
-      strip->setPixelColor(i, strip->Color(c.c1, c.c2, c.c3));
-    }
-  }
-}
-
-// transition d'une couleur à une autre pendant une durée donnée avec une dynamique donnée
-void transition(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, Vec3 startC, Vec3 endC) {
-  if (t > startT && t < endT) {
-    float currentTime = easing(easeType,t,startT,endT);
-    float r = map(currentTime * 1000, 0, 1000, startC.c1, endC.c1);
-    float g = map(currentTime * 1000, 0, 1000, startC.c2, endC.c2);
-    float b = map(currentTime * 1000, 0, 1000, startC.c3, endC.c3);
-    for (int i = 0; i < n; i++) {
-      strip->setPixelColor(i, strip->gamma32(strip->Color(r, g, b)));
-    }
-  }
-}
-
-// animation circulaire 
-void animation_radiale(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float startH, float endH) {
-  if (t > startT && t < endT) {
-    int currentTime = easing(easeType,t,startT,endT)*1000;
-    int ledsOffset = map(currentTime, 0, 1000, 0, n * 8);  // 8 représenter le nombre de tours pendant la durée de l'animation
-    for (int i = 0; i < n; i++) {
-      float teinteHSB = map(i, 0, n, startH, endH);                                                           // on veut une teinte entre 100 et 235 pour notre dégradé
-      float teinteLeds = map(teinteHSB, 0, 360, 0, 65535);                                                // on transforme dans le référentiel led
-      strip->setPixelColor((i + ledsOffset) % n, strip->gamma32(strip->ColorHSV(teinteLeds, 255, 255)));  // on applique la couleur
-    }
-  }
-}
-
-// chatoiements
-void chatoiement(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2) {
-  if (t > startT && t < endT) {
-    int currentTime = easing(easeType,t,startT,endT)*1000;
-    x += 0.005; // x et y n'incrémentent que pendant l'animation
-    y += 0.001;
-    for (int i = 0; i < n; i++) {
-      nx = sn.noise(x, i);
-      int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
-      ny = sn.noise(y, i * 2);
-      int teinte = map(ny * 100, -100, 100, h1, h2);                                   //la teinte est entre les valeurs h1 et h2 dans les arguments de la fonction
-      int teinte1 = map(teinte, 0, 360, 0, 65535);                                     // on transforme dans le référentiel led
-      strip->setPixelColor(i, strip->gamma32(strip->ColorHSV(teinte1, 255, valeur)));  // on applique la couleur
-    }
-  }
-}
-// réaliser une transition dans la valeur ( = luminosité) totale de l'anneau afin d'éteindre ou d'allumer l'anneau dans le chatoiement :
-void chatoiement_valeur(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h1, float h2, float valeur1, float valeur2) {
-  if (t > startT && t < endT) {
-    int currentTime = easing(easeType,t,startT,endT)*1000;
-    x += 0.005; // x et y n'incrémentent que pendant l'animation
-    y += 0.001;
-    for (int i = 0; i < n; i++) {
-      nx = sn.noise(x, i);
-      float valeur = map(currentTime, 0, 1000, valeur1, valeur2);     //la valeur passe de valeur1 à valeur2 pendant la durée de la transition
-      float noiseValeur = map(nx * 100, -100, 100, 0, 1000) / 1000.;  //on crée un noise entre 0 et 1 pour la valeur finale
-      ny = sn.noise(y, i * 2);
-      int teinte = map(ny * 100, -100, 100, h1, h2);  //la teinte est entre les valeurs h1 et h2 dans les arguments de la fonction
-      int teinte1 = map(teinte, 0, 360, 0, 65535);
-      strip->setPixelColor(i, strip->gamma32(strip->ColorHSV(teinte1, 255, noiseValeur * valeur)));  // on applique la couleur avec la valeur qui chatoie et qui passe de valeur1 à valeur2
-    }
-  }
-}
-// pour réaliser une transition de la couleur ( = teinte) afin de changer la couleur dans le chatoiement :
-void chatoiement_color(int easeType, Adafruit_NeoPixel *strip, int n, float t, float startT, float endT, float h_debut_1, float h_debut_2, float h_fin_1, float h_fin_2) {
-  if (t > startT && t < endT) {
-    int currentTime = easing(easeType,t,startT,endT)*1000;
-    x += 0.005; // x et y n'incrémentent que pendant l'animation
-    y += 0.001;
-    for (int i = 0; i < n; i++) {
-      nx = sn.noise(x, i);
-      int valeur = map(nx * 100, -100, 100, 0, 255);  //la valeur des leds chatoie entre 0 et 255
-      ny = sn.noise(y, i * 2);
-      int h1 = map(currentTime, 0, 1000, h_debut_1, h_fin_1);
-      int h2 = map(currentTime, 0, 1000, h_debut_2, h_fin_2);
-      int teinte = map(ny * 100, -100, 100, h1, h2);  //
-      int teinteFinale = map(teinte, 0, 360, 0, 65535);
-      strip->setPixelColor(i, strip->gamma32(strip->ColorHSV(teinteFinale, 255, valeur)));  // on applique la couleur avec la valeur qui chatoie et qui passe de valeur1 à valeur2
-    }
-  }
-}
-
-
-// fonction pour gérer les dynamiques
-float easing(int easeType, uint32_t tt, uint32_t startT, uint32_t endT) {
-  float t = 0;
-  float currentTime = map(tt, startT, endT, 0, 1000) / 1000.;
-  if (easeType == 0) {  // lin
-    t = currentTime;
-  } else if (easeType == 1) {  // sinInOut
-    t = -(cos(PI * currentTime) - 1) / 2.;
-  } else if (easeType == 2) {  // sinIn
-    t = 1 - cos((currentTime * PI) / 2.);
-  } else if (easeType == 3) {  // sinOut
-    t = sin((currentTime * PI) / 2);
-  } else if (easeType == 4) {  // circInOut
-    t = currentTime < 0.5 ? (1 - sqrt(1 - pow(2 * currentTime, 2))) / 2 : (sqrt(1 - pow(-2 * currentTime + 2, 2)) + 1) / 2;
-  } else if (easeType == 5) {  // circIn
-    t = 1 - sqrt(1 - pow(currentTime, 2));
-  } else if (easeType == 6) {  // circOut
-    t = sqrt(1 - pow(currentTime - 1, 2));
-  } else if (easeType == 7) {  // expo
-    t = currentTime == 0
-          ? 0
-        : currentTime == 1
-          ? 1
-        : currentTime < 0.5 ? pow(2, 20 * currentTime - 10) / 2
-                            : (2 - pow(2, -20 * currentTime + 10)) / 2;
-  } else if (easeType == 8) {  // expoIn
-    t = currentTime == 1 ? 1 : 1 - pow(2, -10 * currentTime);
-  } else if (easeType == 9) {  // expoOut
-    t = currentTime == 0 ? 0 : pow(2, 10 * currentTime - 10);
-  }
-  return t;
-}
-```
-
-</details>
+Le reste de ce document explique comment tout cela fonctionne. Les anciennes versions "tout dans un seul fichier" sont toujours disponibles dans [code/tldr_code](code/tldr_code/tldr_code.ino) et [code/tldr_code_chatoiement](code/tldr_code_chatoiement/tldr_code_chatoiement.ino).
 
 
 ## Contenu
@@ -406,6 +77,15 @@ float easing(int easeType, uint32_t tt, uint32_t startT, uint32_t endT) {
 	* 4.1. [Deux anneaux - alimentation par arduino](#Deuxanneauxalimentationpararduino)
 	* 4.2. [Deux anneaux - exemple complet](#Deuxanneauxexemplecomplet)
 	* 4.3. [Trois anneaux - alimentation externe](#Troisanneauxalimentationexterne)
+5. [La bibliothèque LedAnimation](#LabibliothqueLedAnimation)
+	* 5.1. [Installation et exemples](#Installationetexemples)
+	* 5.2. [Structure d'un programme](#Structuredunprogramme)
+	* 5.3. [Les animations](#Lesanimations)
+	* 5.4. [Les réglages](#Lesrglages)
+	* 5.5. [Choisir les leds](#Choisirlesleds)
+	* 5.6. [Ecrire sa propre animation](#Ecriresapropreanimation)
+	* 5.7. [Les pièges à éviter](#Lespigesviter)
+	* 5.8. [Différences avec le code des parties 3 et 4](#Diffrencesaveclecodedesparties3et4)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -837,6 +517,8 @@ Par exemple :
 [**^ Home**](#Contenu)
 
 ##  3. <a name='Crerdestransitions'></a>Créer des transitions
+
+> **Cette partie explique comment les transitions fonctionnent "sous le capot".** Tout le code qu'elle détaille est aujourd'hui regroupé dans la bibliothèque *LedAnimation*, qui s'utilise beaucoup plus simplement : voir la partie [5. La bibliothèque LedAnimation](#LabibliothqueLedAnimation). Ne mélangez pas les deux manières de faire dans un même programme : le code de cette partie ne doit pas être copié dans un programme qui contient `#include <LedAnimation.h>`.
 
 Pour créer des transitions nous allons utiliser du code qu'il n'est pas nécessaire de comprendre, mais qu'il est nécessaire de savoir utiliser !
 
@@ -1459,6 +1141,8 @@ Ensuite il nous reste à adapter le reste du code pour afficher des choses sur l
 
 ###  4.2. <a name='Deuxanneauxexemplecomplet'></a>Deux anneaux : exemple complet
 
+> Le même principe avec la bibliothèque *LedAnimation* : exemple [08_deux_anneaux](examples/08_deux_anneaux/08_deux_anneaux.ino).
+
 ![](./assets/2rings.gif)
 
 ```c
@@ -1598,9 +1282,9 @@ float easing(int easeType, uint32_t tt, uint32_t startT, uint32_t endT) {
         : currentTime < 0.5 ? pow(2, 20 * currentTime - 10) / 2
                             : (2 - pow(2, -20 * currentTime + 10)) / 2;
   } else if (easeType == 8) {  // expoIn
-    t = currentTime == 1 ? 1 : 1 - pow(2, -10 * currentTime);
-  } else if (easeType == 9) {  // expoOut
     t = currentTime == 0 ? 0 : pow(2, 10 * currentTime - 10);
+  } else if (easeType == 9) {  // expoOut
+    t = currentTime == 1 ? 1 : 1 - pow(2, -10 * currentTime);
   }
   return t;
 }
@@ -1623,22 +1307,244 @@ Pour dimensionner une alimentation il faut compter qu'une led consomme au maximu
 [**^ Home**](#Contenu)
 
 
-Les différentes transitions possibles basées sur cette page : https://easings.net/
+##  5. <a name='LabibliothqueLedAnimation'></a>La bibliothèque LedAnimation
+
+La bibliothèque *LedAnimation* regroupe dans un seul fichier, [src/LedAnimation.h](src/LedAnimation.h), les principes détaillés dans les parties précédentes : vous n'avez plus besoin de copier/coller de longues fonctions dans vos programmes, ni de passer une longue liste d'arguments à chacune.
+
+Une animation s'écrit sur une ligne, en enchaînant des fonctions avec des points :
 
 ```c
-fixed_color(ring1, 16, dur, 1000, 2000, bleu);
-
-transition_lin(ring1, 16, dur, 1000, 2000,noir, bleu);
-
-transition_sine_InOut(ring1, 16, dur, 1000, 2000,noir, bleu);
-transition_sine_In(ring1, 16, dur, 1000, 2000,noir, bleu);
-transition_sine_Out(ring1, 16, dur, 1000, 2000,noir, bleu);
-
-transition_circ_InOut(ring1, 16, dur, 1000, 2000,noir, bleu);
-transition_circ_In(ring1, 16, dur, 1000, 2000,noir, bleu);
-transition_circ_Out(ring1, 16, dur, 1000, 2000,noir, bleu);
-
-transition_expo_InOut(ring1, 16, dur, 1000, 2000,noir, bleu);
-transition_expo_In(ring1, 16, dur, 1000, 2000,noir, bleu);
-transition_sine_Out(ring1, 16, dur, 1000, 2000,noir, bleu);
+ring1.transition(noir, bleu).from(0).to(2500).ease(SIN_IN_OUT);
 ```
+
+- *ring1* -> sur les leds nommées ring1
+- *transition(noir, bleu)* -> l'animation à jouer
+- *.from(0).to(2500).ease(SIN_IN_OUT)* -> les réglages, dans l'ordre que vous voulez. Ceux que vous n'écrivez pas gardent leur valeur par défaut.
+
+L'animation la plus courte possible est donc `ring1.chatoiement();`
+
+[**^ Home**](#Contenu)
+
+###  5.1. <a name='Installationetexemples'></a>Installation et exemples
+
+- installer la bibliothèque *Adafruit NeoPixel* depuis le gestionnaire de bibliothèques (cf. [1.1](#Installationdelabibliothque))
+- télécharger ce dépôt en zip : bouton vert *Code* puis *Download ZIP*
+
+- dans arduino, menu *Croquis* -> *Inclure une bibliothèque* -> *Ajouter la bibliothèque .ZIP* et choisir le fichier téléchargé
+
+![](./assets/Import_zip.PNG)
+
+Les exemples sont alors disponibles dans le menu *Fichier* -> *Exemples* -> *LedAnimation*. Ils sont commentés ligne par ligne et numérotés du plus simple au plus avancé :
+
+| exemple | contenu |
+|---|---|
+| [01_premiere_animation](examples/01_premiere_animation/01_premiere_animation.ino) | le programme le plus court possible, expliqué ligne par ligne |
+| [02_transitions](examples/02_transitions/02_transitions.ino) | placer des transitions et des couleurs fixes dans le temps, répéter avec une boucle for |
+| [03_dynamiques](examples/03_dynamiques/03_dynamiques.ino) | comparer les dynamiques (easing) sur les deux moitiés de l'anneau |
+| [04_selection_de_leds](examples/04_selection_de_leds/04_selection_de_leds.ino) | n'utiliser qu'une partie des leds : sélections toutes prêtes, intervalle, liste de numéros |
+| [05_animation_radiale](examples/05_animation_radiale/05_animation_radiale.ino) | le dégradé qui tourne : teintes, nombre de tours, sens de rotation |
+| [06_chatoiement](examples/06_chatoiement/06_chatoiement.ino) | le chatoiement : teintes, changement de teinte, vitesse, allumage et extinction |
+| [07_sunrise](examples/07_sunrise/07_sunrise.ino) | une transition led par led |
+| [08_deux_anneaux](examples/08_deux_anneaux/08_deux_anneaux.ino) | synchroniser deux anneaux |
+| [09_animation_perso](examples/09_animation_perso/09_animation_perso.ino) | écrire ses propres animations et les rendre réglables |
+
+[**^ Home**](#Contenu)
+
+###  5.2. <a name='Structuredunprogramme'></a>Structure d'un programme
+
+- `#include <LedAnimation.h>` tout en haut
+- vos couleurs : `Vec3 bleu = Vec3(0, 200, 255);` (rouge, vert, bleu entre 0 et 255, cf. [3.1.1](#Unstructurepourstockerlescouleurs))
+- `LedRing ring1(16, 6);` : un anneau de 16 leds sur la broche 6. C'est un *Adafruit_NeoPixel* : `ring1.setPixelColor()`, `ring1.ColorHSV()` etc. vus dans les parties 1 et 2 fonctionnent toujours.
+- `ring1.begin();` dans le *setup()*
+- `timeline(5000);` au début du *loop()* : le temps total de l'animation en millisecondes, qui boucle. Cela remplace les variables *totalTime* et *dur*.
+- vos animations, une par ligne
+- `ring1.show();` à la fin du *loop()*
+
+Pour plusieurs anneaux, on ajoute une ligne `LedRing ring2(16, 9);`, un `ring2.begin();` et un `ring2.show();` : tous les anneaux partagent la même timeline.
+
+[**^ Home**](#Contenu)
+
+###  5.3. <a name='Lesanimations'></a>Les animations
+
+| animation | effet | réglages spécifiques |
+|---|---|---|
+| `fixed_color(couleur)` | une couleur fixe | |
+| `transition(couleur1, couleur2)` | passe d'une couleur à une autre, toutes les leds en même temps | |
+| `sunrise(couleur1, couleur2)` | passe d'une couleur à une autre led par led, en partant de la led 0 et en faisant le tour de l'anneau des deux côtés à la fois | |
+| `animation_radiale()` | un dégradé de teintes qui tourne | `.hue(100, 235)` `.turns(8)` |
+| `chatoiement()` | luminosité et teinte de chaque led ondulent grâce au noise | `.hue(160, 270)` `.hueTo()` `.speed(1)` |
+| `play(fonction)` | votre propre animation, cf. [5.6](#Ecriresapropreanimation) | tous |
+
+Les valeurs entre parenthèses dans la dernière colonne sont les valeurs par défaut.
+
+[**^ Home**](#Contenu)
+
+###  5.4. <a name='Lesrglages'></a>Les réglages
+
+Ces réglages fonctionnent avec toutes les animations :
+
+| réglage | effet | par défaut |
+|---|---|---|
+| `.from(ms)` | début de l'animation en millisecondes | 0 |
+| `.to(ms)` | fin de l'animation en millisecondes | la fin de la timeline |
+| `.ease(dynamique)` | LIN, SIN_IN_OUT, SIN_IN, SIN_OUT, CIRC_IN_OUT, CIRC_IN, CIRC_OUT, EXPO_IN_OUT, EXPO_IN, EXPO_OUT (cf. https://easings.net/) | LIN |
+| `.leds(...)` | n'utiliser qu'une partie des leds, cf. [5.5](#Choisirlesleds) | toutes |
+| `.value(debut, fin)` | la luminosité générale au début et à la fin, entre 0 et 255, pour allumer ou éteindre progressivement n'importe quelle animation | 255, 255 |
+
+Ceux-ci ne sont utilisés que par certaines animations (cf. le tableau précédent) et par les vôtres :
+
+| réglage | effet | par défaut |
+|---|---|---|
+| `.hue(h1, h2)` | les teintes utilisées, entre 0 et 360 | selon l'animation |
+| `.hueTo(h1, h2)` | les teintes à la fin de l'animation, pour changer de couleur en cours de route | les mêmes que `.hue()` |
+| `.turns(nombre)` | le nombre de tours pendant l'animation ; un nombre négatif tourne dans l'autre sens | 8 |
+| `.speed(vitesse)` | 2 = deux fois plus vite, 0.5 = deux fois plus lent | 1 |
+| `.colors(couleur1, couleur2)` | deux couleurs, pour vos propres animations | noir, noir |
+
+Quelques exemples :
+
+```c
+ring1.fixed_color(rose).from(2500).to(2600);                   // un flash de 100 ms
+ring1.transition(noir, bleu).to(2500).ease(EXPO_IN);           // de 0 à 2,5 secondes
+ring1.sunrise(noir, orange).from(1000).to(4000);               // led par led
+ring1.animation_radiale().hue(0, 60).turns(-2).ease(SIN_OUT);  // pendant toute la timeline, à l'envers
+ring1.chatoiement().to(3000).value(0, 255);                    // le chatoiement s'allume
+ring1.chatoiement().from(3000).hueTo(0, 60).speed(2);          // puis change de teinte, deux fois plus vite
+```
+
+Entre deux animations, s'il y a un "trou" dans le temps, les leds gardent leur dernière couleur. Si deux animations se jouent en même temps sur les mêmes leds, c'est la dernière écrite dans le programme qui gagne.
+
+[**^ Home**](#Contenu)
+
+###  5.5. <a name='Choisirlesleds'></a>Choisir les leds
+
+Par défaut une animation utilise toutes les leds. `.leds()` permet de n'en utiliser qu'une partie, de trois manières :
+
+```c
+ring1.transition(noir, bleu).leds(EVEN);             // une sélection toute prête
+ring1.transition(noir, bleu).leds(4, 11);            // de la led 4 à la led 11
+ring1.transition(noir, bleu).leds({ 0, 4, 5, 9 });   // une liste de numéros, entre accolades
+
+int croix[] = { 0, 4, 8, 12 };                       // une liste rangée dans une variable ...
+ring1.transition(noir, bleu).leds(croix);            // ... pour la réutiliser
+```
+
+Les sélections toutes prêtes :
+
+| sélection | leds utilisées |
+|---|---|
+| `FULL` | toutes (valeur par défaut) |
+| `EVEN` | les leds paires : 0, 2, 4 ... |
+| `ODDS` | les leds impaires : 1, 3, 5 ... |
+| `FIRST_HALF` | la première moitié de l'anneau |
+| `SECOND_HALF` | la seconde moitié de l'anneau |
+
+Les leds sont numérotées à partir de 0 : un anneau de 16 leds va de 0 à 15. Les leds qui ne sont pas sélectionnées ne sont pas modifiées : on peut donc jouer deux animations différentes en même temps sur deux parties du même anneau.
+
+```c
+ring1.chatoiement().hue(0, 40).leds(FIRST_HALF);
+ring1.chatoiement().hue(160, 270).leds(SECOND_HALF);
+```
+
+Une liste de numéros ne peut contenir que des numéros entre 0 et 255.
+
+[**^ Home**](#Contenu)
+
+###  5.6. <a name='Ecriresapropreanimation'></a>Ecrire sa propre animation
+
+Une animation est une simple fonction qui donne une couleur aux leds. Vous pouvez écrire la vôtre directement dans votre programme (au-dessus du *setup()*), sans toucher à la bibliothèque :
+
+```c
+// un arc-en-ciel qui s'allume
+void arc_en_ciel(Anim &a) {
+  float luminosite = a.mix(0, 255);      // de 0 à 255 pendant l'animation
+  for (int i = 0; i < a.n; i++) {        // pour chaque led
+    float teinte = 360. * i / a.n;       // une teinte qui dépend du numéro de la led
+    a.pixel(i, hsv(teinte, 255, luminosite));
+  }
+}
+```
+
+puis la jouer avec `play()`. Tous les réglages restent utilisables :
+
+```c
+ring1.play(arc_en_ciel).from(0).to(3000).ease(SIN_IN).leds(FIRST_HALF);
+```
+
+Une animation s'écrit toujours sous la forme `void nom(Anim &a) { ... }`. Dans la fonction, *a* donne accès à :
+
+| | |
+|---|---|
+| `a.n` | le nombre de leds |
+| `a.t` | l'avancement de l'animation, de 0 (début) à 1 (fin). La dynamique `.ease()` est déjà appliquée |
+| `a.ms` | le temps écoulé depuis le début de l'animation, en millisecondes |
+| `a.mix(x, y)` | un nombre qui va de x à y pendant l'animation (fonctionne aussi avec deux couleurs *Vec3*) |
+| `a.pixel(i, couleur)` | donner une couleur à la led numéro i |
+| `a.fill(couleur)` | donner une couleur à toutes les leds |
+
+Une couleur s'écrit soit avec un *Vec3* (rouge, vert, bleu), soit avec `hsv(teinte, saturation, luminosité)` : teinte de 0 à 360, saturation et luminosité de 0 à 255.
+
+Les réglages `.from()` `.to()` `.ease()` `.leds()` et `.value()` sont appliqués automatiquement : il n'y a rien à écrire dans la fonction pour qu'ils fonctionnent. Les autres réglages servent à transmettre des valeurs à votre fonction, pour la rendre réglable sans la modifier :
+
+| réglage | dans la fonction |
+|---|---|
+| `.colors(c1, c2)` | `a.color1` `a.color2` |
+| `.hue(h1, h2)` | `a.hue1` `a.hue2` |
+| `.hueTo(h1, h2)` | `a.hueTo1` `a.hueTo2` |
+| `.turns(k)` | `a.nTurns` |
+| `.speed(k)` | `a.speedK` |
+
+Par exemple :
+
+```c
+// un clignotement entre les deux couleurs données avec .colors()
+void clignotement(Anim &a) {
+  if ((a.ms / 150) % 2 == 0) {   // une alternance toutes les 150 millisecondes
+    a.fill(a.color1);
+  } else {
+    a.fill(a.color2);
+  }
+}
+```
+
+```c
+ring1.play(clignotement).from(3000).to(5000).colors(rose, noir);
+ring1.play(clignotement).from(5000).to(7000).colors(blanc, noir).leds(EVEN);
+```
+
+L'exemple [09_animation_perso](examples/09_animation_perso/09_animation_perso.ino) contient ces deux animations et une troisième plus avancée (une comète). Les animations de la bibliothèque sont écrites exactement de cette manière dans la partie 6 du fichier [src/LedAnimation.h](src/LedAnimation.h) : vous pouvez les copier dans votre programme, les renommer et les modifier.
+
+[**^ Home**](#Contenu)
+
+###  5.7. <a name='Lespigesviter'></a>Les pièges à éviter
+
+- **Les temps s'écrivent en millisecondes, directement.** `.to(2.5)` ne veut pas dire 2,5 secondes mais 2 millisecondes : écrivez `.to(2500)`. Et écrivez `timeline(60000)` plutôt que `timeline(60 * 1000)` : sur une carte arduino uno ce calcul dépasse le plus grand nombre entier possible et l'animation ne se jouera pas.
+- **Une ligne = une animation.** Ne rangez pas une animation dans une variable (`Anim a = ring1.transition(...)`) : elle se joue à la fin de sa ligne, au point-virgule.
+- **`(Anim &a)` avec le "&"** quand vous écrivez votre propre animation. Sans lui, le programme peut se téléverser sans erreur sur une carte uno mais l'animation ne fonctionnera pas.
+- **Ne mélangez pas avec le code des parties 3 et 4.** Un programme qui contient `#include <LedAnimation.h>` ne doit pas contenir aussi la structure *Vec3*, les variables *LIN*, *SIN_IN* ... ou les anciennes fonctions `transition(LIN, &ring1, NUMPIXELS, ...)` : la compilation échouerait.
+- **`ring1.show()` à la fin du *loop()*** : sans lui rien ne s'allume.
+
+[**^ Home**](#Contenu)
+
+###  5.8. <a name='Diffrencesaveclecodedesparties3et4'></a>Différences avec le code des parties 3 et 4
+
+Si vous adaptez un ancien programme :
+
+| avant | maintenant |
+|---|---|
+| `Adafruit_NeoPixel ring1(NUMPIXELS, 6, NEO_GRB + NEO_KHZ800);` | `LedRing ring1(16, 6);` |
+| `long totalTime = 5000; long dur = millis() % totalTime;` | `timeline(5000);` |
+| `transition(SIN_OUT, &ring1, NUMPIXELS, dur, 0, 2500, noir, bleu);` | `ring1.transition(noir, bleu).from(0).to(2500).ease(SIN_OUT);` |
+| `fixed_color(&ring1, NUMPIXELS, dur, 0, 500, rose);` | `ring1.fixed_color(rose).from(0).to(500);` |
+| `animation_radiale(LIN, &ring1, NUMPIXELS, dur, 0, 5000, 100, 235);` | `ring1.animation_radiale().from(0).to(5000).hue(100, 235);` |
+| `chatoiement(LIN, &ring1, NUMPIXELS, dur, 0, 5000, 160, 270);` | `ring1.chatoiement().from(0).to(5000).hue(160, 270);` |
+| `chatoiement_valeur(..., 160, 270, 0, 255);` | `ring1.chatoiement().hue(160, 270).value(0, 255);` |
+| `chatoiement_color(..., 160, 255, 0, 60);` | `ring1.chatoiement().hue(160, 255).hueTo(0, 60);` |
+
+Le rendu n'est pas strictement identique :
+
+- le chatoiement n'a plus besoin de la bibliothèque *SimplexNoise* : un noise est inclus. Son dessin est un peu différent, et sa vitesse ne dépend plus de la rapidité de la carte : elle se règle avec `.speed()`.
+- la correction gamma (cf. [1.4](#LemodedecouleurHSB)) est appliquée à toutes les animations, y compris `fixed_color` : une couleur fixe et la fin d'une transition vers cette couleur sont donc identiques.
+- une animation est active dès l'instant `.from()` inclus, jusqu'à l'instant `.to()` exclu : deux animations qui se suivent s'enchaînent sans image perdue.
+
+[**^ Home**](#Contenu)
