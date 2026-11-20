@@ -1545,6 +1545,7 @@ Le rendu n'est pas strictement identique :
 
 - le chatoiement n'a plus besoin de la bibliothèque *SimplexNoise* : un noise est inclus. Son dessin est un peu différent, et sa vitesse ne dépend plus de la rapidité de la carte : elle se règle avec `.speed()`.
 - la correction gamma (cf. [1.4](#LemodedecouleurHSB)) est appliquée à toutes les animations, y compris `fixed_color` : une couleur fixe et la fin d'une transition vers cette couleur sont donc identiques.
+- pour adoucir les variations très lentes de luminosité, chaque led arrondit sa valeur à un moment différent de ses voisines (*dithering*). Dans une couleur très sombre, deux leds voisines peuvent donc avoir un niveau d'écart ; avec un diffuseur cela ne se voit pas. Pour revenir à l'arrondi habituel, ajoutez `ring1.dithering(false);` dans le `setup()`.
 - une animation est active dès l'instant `.from()` inclus, jusqu'à l'instant `.to()` exclu : deux animations qui se suivent s'enchaînent sans image perdue.
 
 [**^ Home**](#Contenu)

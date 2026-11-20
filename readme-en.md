@@ -1604,6 +1604,7 @@ The result is not strictly identical:
 
 - the shimmering no longer needs the *SimplexNoise* library: a noise function is included. Its pattern is slightly different, and its speed no longer depends on how fast the board is: it is set with `.speed()`.
 - gamma correction (see [1.4](#HSBcolormode)) is applied to every animation, including `fixed_color`: a fixed color and the end of a transition towards that color are therefore identical.
+- to smooth very slow brightness changes, each LED rounds its value at a different moment from its neighbours (*dithering*). In a very dark color, two neighbouring LEDs can therefore be one level apart; behind a diffuser this is not visible. To go back to plain rounding, add `ring1.dithering(false);` in `setup()`.
 - an animation is active from the `.from()` instant included, until the `.to()` instant excluded: two animations that follow each other chain without a lost frame.
 
 [**^ Home**](#Contents)

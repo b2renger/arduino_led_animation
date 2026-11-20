@@ -41,10 +41,37 @@ inline uint32_t rgb(Vec3 c) {
 }
 
 // une couleur en HSB : teinte entre 0 et 360, saturation et luminosité entre 0 et 255
-inline uint32_t hsv(float teinte, float saturation = 255, float valeur = 255) {
+// Le résultat est un Vec3 : le calcul se fait avec des nombres à virgule, pour
+// que les variations lentes de luminosité restent les plus douces possible.
+inline Vec3 hsv(float teinte, float saturation = 255, float valeur = 255) {
   teinte = fmod(teinte, 360);
   if (teinte < 0) teinte += 360;
-  return Adafruit_NeoPixel::ColorHSV((uint16_t)(teinte / 360. * 65535.), constrain(saturation, 0, 255), constrain(valeur, 0, 255));
+  if (teinte >= 360) teinte = 0;
+  float s = constrain(saturation, 0, 255) / 255.;
+  float v = constrain(valeur, 0, 255);
+  int secteur = teinte / 60;        // 6 secteurs : rouge, jaune, vert, cyan, bleu, magenta
+  float f = teinte / 60 - secteur;  // la position dans le secteur, entre 0 et 1
+  float p = v * (1 - s);
+  float q = v * (1 - s * f);
+  float u = v * (1 - s * (1 - f));
+  switch (secteur) {
+    case 0: return Vec3(v, u, p);
+    case 1: return Vec3(q, v, p);
+    case 2: return Vec3(p, v, u);
+    case 3: return Vec3(p, q, v);
+    case 4: return Vec3(u, p, v);
+    default: return Vec3(v, p, q);
+  }
+}
+
+// Le niveau (entre 0 et 255) envoyé à une led pour une valeur entre 0 et 255.
+// - la correction gamma est calculée avec des nombres à virgule : v * v * racine(v)
+//   correspond à un gamma de 2.5
+// - on arrondit une seule fois, tout à la fin. "seuil" décide à partir de
+//   quelle décimale on arrondit au-dessus (0.5 = l'arrondi habituel)
+inline uint8_t ledLevel(float valeur, float seuil) {
+  float v = constrain(valeur, 0, 255) / 255.;
+  return (uint8_t)(v * v * sqrt(v) * 255 + seuil);
 }
 
 // un mélange de deux couleurs : k = 0 donne "debut", k = 1 donne "fin"
@@ -165,6 +192,16 @@ public:
     timeline(0);  // on met le temps à jour pour le prochain tour de loop()
   }
 
+  // Une led n'a que 256 niveaux par couleur : dans une variation très lente,
+  // on voit chaque changement de niveau. Pour l'adoucir, chaque led arrondit
+  // à un moment différent de ses voisines (c'est le "dithering") : les leds
+  // ne changent donc pas toutes de niveau en même temps.
+  // ring1.dithering(false) dans le setup() pour revenir à l'arrondi habituel.
+  void dithering(bool actif) {
+    dither = actif;
+  }
+  bool dither = true;
+
   // le temps du noise de cet anneau : il n'avance que quand on l'utilise,
   // un chatoiement reprend donc là où il s'était arrêté
   float noiseTime(float speed) {
@@ -208,22 +245,23 @@ public:
   }
   // donner une couleur à une led : la sélection .leds(), la luminosité .value()
   // et la correction gamma sont appliquées ici
-  void pixel(int i, uint32_t color) {
-    if (!selected(i)) return;
-    if (dim < 1) {
-      color = Adafruit_NeoPixel::Color(((color >> 16) & 255) * dim, ((color >> 8) & 255) * dim, (color & 255) * dim);
-    }
-    strip.setPixelColor(i, Adafruit_NeoPixel::gamma32(color));
-  }
   void pixel(int i, Vec3 color) {
-    pixel(i, rgb(color));
+    if (!selected(i)) return;
+    // le seuil d'arrondi de cette led : différent pour chaque led (0, 0.62, 0.23,
+    // 0.85 ...) avec le dithering, 0.5 pour toutes sinon
+    float seuil = strip.dither ? (uint8_t)(i * 158u) / 256. : 0.5;
+    strip.setPixelColor(i, Adafruit_NeoPixel::Color(ledLevel(color.c1 * dim, seuil), ledLevel(color.c2 * dim, seuil), ledLevel(color.c3 * dim, seuil)));
+  }
+  // la même chose avec une couleur déjà "emballée" (Color(), ColorHSV() ...)
+  void pixel(int i, uint32_t color) {
+    pixel(i, Vec3((color >> 16) & 255, (color >> 8) & 255, color & 255));
   }
   // donner la même couleur à toutes les leds
-  void fill(uint32_t color) {
+  void fill(Vec3 color) {
     for (int i = 0; i < n; i++) pixel(i, color);
   }
-  void fill(Vec3 color) {
-    fill(rgb(color));
+  void fill(uint32_t color) {
+    for (int i = 0; i < n; i++) pixel(i, color);
   }
   // est-ce que la led i fait partie de la sélection .leds() ?
   bool selected(int i) {
