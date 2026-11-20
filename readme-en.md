@@ -47,7 +47,7 @@ void loop() {
 }
 ```
 
-You chain functions separated by dots: everything you don't specify takes a default value. All the possibilities are listed in section [5. The LedAnimation library](#TheLedAnimationlibrary).
+You chain functions separated by dots: everything you don't specify takes a default value. All the possibilities are listed in section [5. The LedAnimation library](#5-the-ledanimation-library).
 
 The rest of this document explains how all of this works. The old "everything in one file" versions are still available in [code/tldr_code](code/tldr_code/tldr_code.ino) and [code/tldr_code_chatoiement](code/tldr_code_chatoiement/tldr_code_chatoiement.ino).
 
@@ -55,36 +55,36 @@ The rest of this document explains how all of this works. The old "everything in
 ## Contents
 
 <!-- vscode-markdown-toc -->
-1. [Connecting an LED ring or strip](#ConnectinganLEDringorstrip)
-	* 1.1. [Library installation](#Libraryinstallation)
-	* 1.2. [Programming LEDs manually](#ProgrammingLEDsmanually)
-	* 1.3. [Using a loop to assign all LEDs](#UsingalooptoassignallLEDs)
-	* 1.4. [HSB color mode](#HSBcolormode)
-2. [Advanced programming](#Advancedprogramming)
-	* 2.1. [Radial animation](#Radialanimation)
-	* 2.2. [Noise](#Noise)
-3. [Creating transitions](#Creatingtransitions)
-	* 3.1. [Code structures to know how to use](#Codestructurestoknowhowtouse)
-		* 3.1.1. [A structure to store colors](#Astructuretostorecolors)
-		* 3.1.2. [Managing time](#Managingtime)
-		* 3.1.3. [Functions to create transitions](#Functionstocreatetransitions)
-	* 3.2. [Available transitions](#Availabletransitions)
-	* 3.3. [Simple transition](#Simpletransition)
-	* 3.4. [A complete transition program for a ring](#Acompletetransitionprogramforaring)
-	* 3.5. [Alternating solid color transitions and pixel-by-pixel animations](#Alternatingsolidcolortransitionsandpixel-by-pixelanimations)
-4. [Connecting and assigning multiple rings](#Connectingandassigningmultiplerings)
-	* 4.1. [Two rings - arduino power supply](#Tworings-arduinopowersupply)
-	* 4.2. [Two rings - complete example](#Tworings-completeexample)
-	* 4.3. [Three rings - external power supply](#Threerings-externalpowersupply)
-5. [The LedAnimation library](#TheLedAnimationlibrary)
-	* 5.1. [Installation and examples](#Installationandexamples)
-	* 5.2. [Structure of a program](#Structureofaprogram)
-	* 5.3. [The animations](#Theanimations)
-	* 5.4. [The settings](#Thesettings)
-	* 5.5. [Choosing the LEDs](#ChoosingtheLEDs)
-	* 5.6. [Writing your own animation](#Writingyourownanimation)
-	* 5.7. [Pitfalls to avoid](#Pitfallstoavoid)
-	* 5.8. [Differences with the code from sections 3 and 4](#Differenceswiththecodefromsections3and4)
+1. [Connecting an LED ring or strip](#1-connecting-an-led-ring-or-strip)
+	* 1.1. [Library installation](#11-library-installation)
+	* 1.2. [Programming LEDs manually](#12-programming-leds-manually)
+	* 1.3. [Using a loop to assign all LEDs](#13-using-a-loop-to-assign-all-leds)
+	* 1.4. [HSB color mode](#14-hsb-color-mode)
+2. [Advanced programming](#2-advanced-programming)
+	* 2.1. [Radial animation](#21-radial-animation)
+	* 2.2. [Noise](#22-noise)
+3. [Creating transitions](#3-creating-transitions)
+	* 3.1. [Code structures to know how to use](#31-code-structures-to-know-how-to-use)
+		* 3.1.1. [A structure to store colors](#311-a-structure-to-store-colors)
+		* 3.1.2. [Managing time](#312-managing-time)
+		* 3.1.3. [Functions to create transitions](#313-functions-to-create-transitions)
+	* 3.2. [Available transitions](#32-available-transitions)
+	* 3.3. [Simple transition](#33-simple-transition)
+	* 3.4. [A complete transition program for a ring](#34-a-complete-transition-program-for-a-ring)
+	* 3.5. [Alternating solid color transitions and pixel-by-pixel animations](#35-alternating-solid-color-transitions-and-pixel-by-pixel-animations)
+4. [Connecting and assigning multiple rings](#4-connecting-and-assigning-multiple-rings)
+	* 4.1. [Two rings - arduino power supply](#41-two-rings---arduino-power-supply)
+	* 4.2. [Two rings - complete example](#42-two-rings---complete-example)
+	* 4.3. [Three rings - external power supply](#43-three-rings---external-power-supply)
+5. [The LedAnimation library](#5-the-ledanimation-library)
+	* 5.1. [Installation and examples](#51-installation-and-examples)
+	* 5.2. [Structure of a program](#52-structure-of-a-program)
+	* 5.3. [The animations](#53-the-animations)
+	* 5.4. [The settings](#54-the-settings)
+	* 5.5. [Choosing the LEDs](#55-choosing-the-leds)
+	* 5.6. [Writing your own animation](#56-writing-your-own-animation)
+	* 5.7. [Pitfalls to avoid](#57-pitfalls-to-avoid)
+	* 5.8. [Differences with the code from sections 3 and 4](#58-differences-with-the-code-from-sections-3-and-4)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -104,7 +104,7 @@ So let's start by connecting our first ring, directly to the board:
 
 We can now open the [arduino](https://www.arduino.cc/en/software) software to program!
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  1.1. <a name='Libraryinstallation'></a>Library installation
 
@@ -118,7 +118,7 @@ Then, in the search field type "neopixels" and choose the *Adafruit NeoPixel* li
 
 ![library selection](./assets/gestionnaire_lib.PNG)
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  1.2. <a name='ProgrammingLEDsmanually'></a>Programming LEDs manually
 
@@ -169,7 +169,7 @@ You should then get this result:
 
 Just for 16 LEDs this process is a bit tedious; imagine having 32 or 400! And let's not even talk about potential animations we might want to create... 
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  1.3. <a name='UsingalooptoassignallLEDs'></a>Using a loop to assign all LEDs
 
@@ -295,7 +295,7 @@ We also calculate a variable called *b* which will be the "mirror" of *a* relati
 ![](./assets/exemple02b.jpg)
 
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  1.4. <a name='HSBcolormode'></a>HSB color mode
 
@@ -379,7 +379,7 @@ With correction:
 ![](assets/exemple03_gamma.jpg)
 
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 
 ##  2. <a name='Advancedprogramming'></a>Advanced programming
@@ -421,7 +421,7 @@ So:
 will always give a result between 0 and NUMPIXELS which was our goal.
 
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  2.2. <a name='Noise'></a>Noise
 
@@ -513,11 +513,11 @@ For example:
 - same for *ny = sn.noise(y, i*2);*
 
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ##  3. <a name='Creatingtransitions'></a>Creating transitions
 
-> **This section explains how transitions work "under the hood".** All the code it details is now gathered in the *LedAnimation* library, which is much simpler to use: see section [5. The LedAnimation library](#TheLedAnimationlibrary). Do not mix the two ways of doing things in the same program: the code from this section must not be copied into a program that contains `#include <LedAnimation.h>`.
+> **This section explains how transitions work "under the hood".** All the code it details is now gathered in the *LedAnimation* library, which is much simpler to use: see section [5. The LedAnimation library](#5-the-ledanimation-library). Do not mix the two ways of doing things in the same program: the code from this section must not be copied into a program that contains `#include <LedAnimation.h>`.
 
 To create transitions we will use code that is not necessary to understand, but it is necessary to know how to use!
 
@@ -529,7 +529,7 @@ You will find at the end of this section a complete and functional code example 
 
 
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  3.1. <a name='Codestructurestoknowhowtouse'></a>Code structures to know how to use
 
@@ -567,7 +567,7 @@ Just copy/paste a line and modify the components as you wish whether in RGB or H
 To find colors expressed in rgb or hsb you can go here:
 https://color.adobe.com/en/create/color-wheel
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ####  3.1.2. <a name='Managingtime'></a>Managing time
 
@@ -586,7 +586,7 @@ long dur = millis() % totalTime;
 
 *dur* : is the current time we will use it to pass to our animation functions so that they can execute in the defined timings.
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ####  3.1.3. <a name='Functionstocreatetransitions'></a>Functions to create transitions
 
@@ -781,7 +781,7 @@ The available functions are then:
 You can refer to this page to understand how the different easing functions work: https://easings.net/
 
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 
 ###  3.3. <a name='Simpletransition'></a>Simple transition
@@ -806,7 +806,7 @@ To create a light transition:
 
 Most transitions work this way with these same arguments to specify between the parentheses.
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  3.4. <a name='Acompletetransitionprogramforaring'></a>A complete transition program for a ring
 ![](./assets/transition.gif)
@@ -1019,7 +1019,7 @@ void transition_expo_In(Adafruit_NeoPixel *strip, int n, float t, float startT, 
 }
 
 ```
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  3.5. <a name='Alternatingsolidcolortransitionsandpixel-by-pixelanimations'></a>Alternating solid color transitions and pixel-by-pixel animations
 
@@ -1117,7 +1117,7 @@ void shimmer_color(Adafruit_NeoPixel *strip, int n, float t, float startT, float
   }
 ```
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ##  4. <a name='Connectingandassigningmultiplerings'></a>Connecting and assigning multiple rings
 
@@ -1350,7 +1350,7 @@ void transition_expo_In(Adafruit_NeoPixel *strip, int n, float t, float startT, 
 }
 ``` 
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  4.3. <a name='Threerings-externalpowersupply'></a>Three rings - external power supply
 
@@ -1363,7 +1363,7 @@ Normally by adapting the code for two rings to 3 rings, you should succeed becau
 To size a power supply you need to count that one LED consumes a maximum of 60mA when lit in white. Theoretically if we turn on all the LEDs of a ring in white we therefore consume 0.96 A. For two rings 1.92 A and for 3 rings 2.88 A.
 
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 
 ##  5. <a name='TheLedAnimationlibrary'></a>The LedAnimation library
@@ -1382,11 +1382,11 @@ ring1.transition(noir, bleu).from(0).to(2500).ease(SIN_IN_OUT);
 
 The shortest possible animation is therefore `ring1.chatoiement();`
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  5.1. <a name='Installationandexamples'></a>Installation and examples
 
-- install the *Adafruit NeoPixel* library from the library manager (see [1.1](#Libraryinstallation))
+- install the *Adafruit NeoPixel* library from the library manager (see [1.1](#11-library-installation))
 - download this repository as a zip: green *Code* button then *Download ZIP*
 
 - in arduino, menu *Sketch* -> *Include Library* -> *Add .ZIP Library* and choose the downloaded file
@@ -1407,12 +1407,12 @@ The examples are then available in the menu *File* -> *Examples* -> *LedAnimatio
 | [08_deux_anneaux](examples/08_deux_anneaux/08_deux_anneaux.ino) | synchronizing two rings |
 | [09_animation_perso](examples/09_animation_perso/09_animation_perso.ino) | writing your own animations and making them adjustable |
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  5.2. <a name='Structureofaprogram'></a>Structure of a program
 
 - `#include <LedAnimation.h>` at the very top
-- your colors: `Vec3 bleu = Vec3(0, 200, 255);` (red, green, blue between 0 and 255, see [3.1.1](#Astructuretostorecolors))
+- your colors: `Vec3 bleu = Vec3(0, 200, 255);` (red, green, blue between 0 and 255, see [3.1.1](#311-a-structure-to-store-colors))
 - `LedRing ring1(16, 6);` : a ring of 16 LEDs on pin 6. It is an *Adafruit_NeoPixel*: `ring1.setPixelColor()`, `ring1.ColorHSV()` etc. seen in sections 1 and 2 still work.
 - `ring1.begin();` in *setup()*
 - `timeline(5000);` at the beginning of *loop()*: the total animation time in milliseconds, which loops. This replaces the *totalTime* and *dur* variables.
@@ -1421,7 +1421,7 @@ The examples are then available in the menu *File* -> *Examples* -> *LedAnimatio
 
 For several rings, add a line `LedRing ring2(16, 9);`, a `ring2.begin();` and a `ring2.show();`: all rings share the same timeline.
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  5.3. <a name='Theanimations'></a>The animations
 
@@ -1432,11 +1432,11 @@ For several rings, add a line `LedRing ring2(16, 9);`, a `ring2.begin();` and a 
 | `sunrise(color1, color2)` | goes from one color to another LED by LED, starting from LED 0 and going around the ring on both sides at once | |
 | `animation_radiale()` | a rotating hue gradient | `.hue(100, 235)` `.turns(8)` |
 | `chatoiement()` | shimmering: brightness and hue of each LED undulate thanks to noise | `.hue(160, 270)` `.hueTo()` `.speed(1)` |
-| `play(function)` | your own animation, see [5.6](#Writingyourownanimation) | all |
+| `play(function)` | your own animation, see [5.6](#56-writing-your-own-animation) | all |
 
 The values in parentheses in the last column are the default values.
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  5.4. <a name='Thesettings'></a>The settings
 
@@ -1447,7 +1447,7 @@ These settings work with every animation:
 | `.from(ms)` | start of the animation in milliseconds | 0 |
 | `.to(ms)` | end of the animation in milliseconds | the end of the timeline |
 | `.ease(dynamic)` | LIN, SIN_IN_OUT, SIN_IN, SIN_OUT, CIRC_IN_OUT, CIRC_IN, CIRC_OUT, EXPO_IN_OUT, EXPO_IN, EXPO_OUT (see https://easings.net/) | LIN |
-| `.leds(...)` | only use some of the LEDs, see [5.5](#ChoosingtheLEDs) | all |
+| `.leds(...)` | only use some of the LEDs, see [5.5](#55-choosing-the-leds) | all |
 | `.value(start, end)` | overall brightness at the start and at the end, between 0 and 255, to fade any animation in or out | 255, 255 |
 
 These are only used by some animations (see the previous table) and by your own:
@@ -1473,7 +1473,7 @@ ring1.chatoiement().from(3000).hueTo(0, 60).speed(2);          // then changes h
 
 Between two animations, if there is a "gap" in time, the LEDs keep their last color. If two animations play at the same time on the same LEDs, the last one written in the program wins.
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  5.5. <a name='ChoosingtheLEDs'></a>Choosing the LEDs
 
@@ -1507,7 +1507,7 @@ ring1.chatoiement().hue(160, 270).leds(SECOND_HALF);
 
 A list of numbers can only contain numbers between 0 and 255.
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  5.6. <a name='Writingyourownanimation'></a>Writing your own animation
 
@@ -1573,7 +1573,7 @@ ring1.play(clignotement).from(5000).to(7000).colors(blanc, noir).leds(EVEN);
 
 The example [09_animation_perso](examples/09_animation_perso/09_animation_perso.ino) contains these two animations and a third, more advanced one (a comet). The library's animations are written exactly this way in part 6 of the file [src/LedAnimation.h](src/LedAnimation.h): you can copy them into your program, rename them and modify them.
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  5.7. <a name='Pitfallstoavoid'></a>Pitfalls to avoid
 
@@ -1583,7 +1583,7 @@ The example [09_animation_perso](examples/09_animation_perso/09_animation_perso.
 - **Do not mix with the code from sections 3 and 4.** A program that contains `#include <LedAnimation.h>` must not also contain the *Vec3* structure, the *LIN*, *SIN_IN* ... variables or the old functions `transition(LIN, &ring1, NUMPIXELS, ...)`: compilation would fail.
 - **`ring1.show()` at the end of *loop()***: without it nothing lights up.
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)
 
 ###  5.8. <a name='Differenceswiththecodefromsections3and4'></a>Differences with the code from sections 3 and 4
 
@@ -1603,8 +1603,8 @@ If you are adapting an old program:
 The result is not strictly identical:
 
 - the shimmering no longer needs the *SimplexNoise* library: a noise function is included. Its pattern is slightly different, and its speed no longer depends on how fast the board is: it is set with `.speed()`.
-- gamma correction (see [1.4](#HSBcolormode)) is applied to every animation, including `fixed_color`: a fixed color and the end of a transition towards that color are therefore identical.
+- gamma correction (see [1.4](#14-hsb-color-mode)) is applied to every animation, including `fixed_color`: a fixed color and the end of a transition towards that color are therefore identical.
 - to smooth very slow brightness changes, each LED rounds its value at a different moment from its neighbours (*dithering*). In a very dark color, two neighbouring LEDs can therefore be one level apart; behind a diffuser this is not visible. To go back to plain rounding, add `ring1.dithering(false);` in `setup()`.
 - an animation is active from the `.from()` instant included, until the `.to()` instant excluded: two animations that follow each other chain without a lost frame.
 
-[**^ Home**](#Contents)
+[**^ Home**](#contents)

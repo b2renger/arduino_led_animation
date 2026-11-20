@@ -48,7 +48,7 @@ void loop() {
 }
 ```
 
-On enchaîne des fonctions séparées par des points : tout ce que vous ne précisez pas prend une valeur par défaut. Toutes les possibilités sont listées dans la partie [5. La bibliothèque LedAnimation](#LabibliothqueLedAnimation).
+On enchaîne des fonctions séparées par des points : tout ce que vous ne précisez pas prend une valeur par défaut. Toutes les possibilités sont listées dans la partie [5. La bibliothèque LedAnimation](#5-la-bibliothèque-ledanimation).
 
 Le reste de ce document explique comment tout cela fonctionne. Les anciennes versions "tout dans un seul fichier" sont toujours disponibles dans [code/tldr_code](code/tldr_code/tldr_code.ino) et [code/tldr_code_chatoiement](code/tldr_code_chatoiement/tldr_code_chatoiement.ino).
 
@@ -56,36 +56,36 @@ Le reste de ce document explique comment tout cela fonctionne. Les anciennes ver
 ## Contenu
 
 <!-- vscode-markdown-toc -->
-1. [Brancher un anneau ou ruban de Leds](#BrancherunanneauourubandeLeds)
-	* 1.1. [Installation de la bibliothèque](#Installationdelabibliothque)
-	* 1.2. [Programmer les leds manuellement](#Programmerlesledsmanuellement)
-	* 1.3. [Utiliser une boucle pour assigner toutes les leds](#Utiliserunebouclepourassignertouteslesleds)
-	* 1.4. [Le mode de couleur HSB](#LemodedecouleurHSB)
-2. [Programmation avancée](#Programmationavance)
-	* 2.1. [Animation radiale](#Animationradiale)
-	* 2.2. [Noise](#Noise)
-3. [Créer des transitions](#Crerdestransitions)
-	* 3.1. [Des structures de codes à savoir utiliser](#Desstructuresdecodessavoirutiliser)
-		* 3.1.1. [Un structure pour stocker les couleurs](#Unstructurepourstockerlescouleurs)
-		* 3.1.2. [Gérer le temps](#Grerletemps)
-		* 3.1.3. [Des fonctions pour réaliser des transitions](#Desfonctionspourraliserdestransitions)
-	* 3.2. [Transitions disponibles](#Transitionsdisponibles)
-	* 3.3. [Transition simple](#Transitionsimple)
-	* 3.4. [Un programme complet de transitions pour un anneau](#Unprogrammecompletdetransitionspourunanneau)
-	* 3.5. [Alterner des transitions de couleurs pleines et des animations pixel par pixel](#Alternerdestransitionsdecouleurspleinesetdesanimationspixelparpixel)
-4. [Brancher et assigner plusieurs anneaux](#Brancheretassignerplusieursanneaux)
-	* 4.1. [Deux anneaux - alimentation par arduino](#Deuxanneauxalimentationpararduino)
-	* 4.2. [Deux anneaux - exemple complet](#Deuxanneauxexemplecomplet)
-	* 4.3. [Trois anneaux - alimentation externe](#Troisanneauxalimentationexterne)
-5. [La bibliothèque LedAnimation](#LabibliothqueLedAnimation)
-	* 5.1. [Installation et exemples](#Installationetexemples)
-	* 5.2. [Structure d'un programme](#Structuredunprogramme)
-	* 5.3. [Les animations](#Lesanimations)
-	* 5.4. [Les réglages](#Lesrglages)
-	* 5.5. [Choisir les leds](#Choisirlesleds)
-	* 5.6. [Ecrire sa propre animation](#Ecriresapropreanimation)
-	* 5.7. [Les pièges à éviter](#Lespigesviter)
-	* 5.8. [Différences avec le code des parties 3 et 4](#Diffrencesaveclecodedesparties3et4)
+1. [Brancher un anneau ou ruban de Leds](#1-brancher-un-anneau-ou-ruban-de-leds)
+	* 1.1. [Installation de la bibliothèque](#11-installation-de-la-bibliothèque)
+	* 1.2. [Programmer les leds manuellement](#12-programmer-les-leds-manuellement)
+	* 1.3. [Utiliser une boucle pour assigner toutes les leds](#13-utiliser-une-boucle-pour-assigner-toutes-les-leds)
+	* 1.4. [Le mode de couleur HSB](#14-le-mode-de-couleur-hsb)
+2. [Programmation avancée](#2-programmation-avancée)
+	* 2.1. [Animation radiale](#21-animation-radiale)
+	* 2.2. [Noise](#22-noise)
+3. [Créer des transitions](#3-créer-des-transitions)
+	* 3.1. [Des structures de codes à savoir utiliser](#31-des-structures-de-codes-à-savoir-utiliser)
+		* 3.1.1. [Un structure pour stocker les couleurs](#311-un-structure-pour-stocker-les-couleurs)
+		* 3.1.2. [Gérer le temps](#312-gérer-le-temps)
+		* 3.1.3. [Des fonctions pour réaliser des transitions](#313-des-fonctions-pour-réaliser-des-transitions)
+	* 3.2. [Transitions disponibles](#32-transitions-disponibles)
+	* 3.3. [Transition simple](#33-transition-simple)
+	* 3.4. [Un programme complet de transitions pour un anneau](#34-un-programme-complet-de-transitions-pour-un-anneau)
+	* 3.5. [Alterner des transitions de couleurs pleines et des animations pixel par pixel](#35-alterner-des-transitions-de-couleurs-pleines-et-des-animations-pixel-par-pixel)
+4. [Brancher et assigner plusieurs anneaux](#4-brancher-et-assigner-plusieurs-anneaux)
+	* 4.1. [Deux anneaux - alimentation par arduino](#41-deux-anneaux--alimentation-par-arduino)
+	* 4.2. [Deux anneaux - exemple complet](#42-deux-anneaux--exemple-complet)
+	* 4.3. [Trois anneaux - alimentation externe](#43-trois-anneaux--alimentation-externe)
+5. [La bibliothèque LedAnimation](#5-la-bibliothèque-ledanimation)
+	* 5.1. [Installation et exemples](#51-installation-et-exemples)
+	* 5.2. [Structure d'un programme](#52-structure-dun-programme)
+	* 5.3. [Les animations](#53-les-animations)
+	* 5.4. [Les réglages](#54-les-réglages)
+	* 5.5. [Choisir les leds](#55-choisir-les-leds)
+	* 5.6. [Ecrire sa propre animation](#56-ecrire-sa-propre-animation)
+	* 5.7. [Les pièges à éviter](#57-les-pièges-à-éviter)
+	* 5.8. [Différences avec le code des parties 3 et 4](#58-différences-avec-le-code-des-parties-3-et-4)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -105,7 +105,7 @@ Commençons donc par brancher notre premier anneau, directement sur la carte :
 
 Nous pouvons maintenant ouvrir le logiciel [arduino](https://www.arduino.cc/en/software), afin de programmer !
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  1.1. <a name='Installationdelabibliothque'></a>Installation de la bibliothèque
 
@@ -119,7 +119,7 @@ Puis, dans le champ de recherche taper "neopixels" et choisir la bibliothèque *
 
 ![sélection de bibliothèque](./assets/gestionnaire_lib.PNG)
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  1.2. <a name='Programmerlesledsmanuellement'></a>Programmer les leds manuellement
 
@@ -170,7 +170,7 @@ Vous devriez alors obtenir ce résultat :
 
 Rien que pour 16 leds ce processus est un peu fastidieu; imaginez alors en avoir 32 ou 400 ! et ne parlons même pas des animations potentielles que nous souhaiterions créer ... 
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  1.3. <a name='Utiliserunebouclepourassignertouteslesleds'></a>Utiliser une boucle pour assigner toutes les leds
 
@@ -296,7 +296,7 @@ On calcule aussi une variable appelée *b* qui sera le "miroir" de *a* par rappo
 ![](./assets/exemple02b.jpg)
 
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  1.4. <a name='LemodedecouleurHSB'></a>Le mode de couleur HSB
 
@@ -380,7 +380,7 @@ Avec correction :
 ![](assets/exemple03_gamma.jpg)
 
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 
 ##  2. <a name='Programmationavance'></a>Programmation avancée
@@ -422,7 +422,7 @@ Du coup :
 donnera toujours un résultat entre 0 et NUMPIXELS ce qui était notre but.
 
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  2.2. <a name='Noise'></a>Noise
 
@@ -514,11 +514,11 @@ Par exemple :
 - idem pour *ny = sn.noise(y, i*2);*
 
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ##  3. <a name='Crerdestransitions'></a>Créer des transitions
 
-> **Cette partie explique comment les transitions fonctionnent "sous le capot".** Tout le code qu'elle détaille est aujourd'hui regroupé dans la bibliothèque *LedAnimation*, qui s'utilise beaucoup plus simplement : voir la partie [5. La bibliothèque LedAnimation](#LabibliothqueLedAnimation). Ne mélangez pas les deux manières de faire dans un même programme : le code de cette partie ne doit pas être copié dans un programme qui contient `#include <LedAnimation.h>`.
+> **Cette partie explique comment les transitions fonctionnent "sous le capot".** Tout le code qu'elle détaille est aujourd'hui regroupé dans la bibliothèque *LedAnimation*, qui s'utilise beaucoup plus simplement : voir la partie [5. La bibliothèque LedAnimation](#5-la-bibliothèque-ledanimation). Ne mélangez pas les deux manières de faire dans un même programme : le code de cette partie ne doit pas être copié dans un programme qui contient `#include <LedAnimation.h>`.
 
 Pour créer des transitions nous allons utiliser du code qu'il n'est pas nécessaire de comprendre, mais qu'il est nécessaire de savoir utiliser !
 
@@ -530,7 +530,7 @@ Vous trouverez à la fin de cette section un exemple de code complet et fonction
 
 
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  3.1. <a name='Desstructuresdecodessavoirutiliser'></a>Des structures de codes à savoir utiliser
 
@@ -568,7 +568,7 @@ Il suffit de copier/coller une ligne et de modifier les composantes à votre gui
 Pour trouver des couleurs exprimées en rgb ou hsb vous pouvez vous rendre ici :
 https://color.adobe.com/fr/create/color-wheel
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ####  3.1.2. <a name='Grerletemps'></a>Gérer le temps
 
@@ -587,7 +587,7 @@ long dur = millis() % totalTime;
 
 *dur* : est le temps actuel nous allons l'utiliser pour le passer à nos fonction d'animation pour que celles-ci puissent s'executer dans les timings définis.
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ####  3.1.3. <a name='Desfonctionspourraliserdestransitions'></a>Des fonctions pour réaliser des transitions
 
@@ -782,7 +782,7 @@ Les fonctions disponibles sont alors :
 Vous pouvez vous référer à cette page pour comprendre comment fonctionnent les différentes fonctions de easing : https://easings.net/
 
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 
 ###  3.3. <a name='Transitionsimple'></a>Transition simple
@@ -807,7 +807,7 @@ Pour créer une transition lumineuse :
 
 La plupart des transitions fonctionnent de cette façon avec ces mêmes arguments à préciser entre les parenthèse.
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  3.4. <a name='Unprogrammecompletdetransitionspourunanneau'></a>Un programme complet de transitions pour un anneau
 ![](./assets/transition.gif)
@@ -1020,7 +1020,7 @@ void transition_expo_In(Adafruit_NeoPixel *strip, int n, float t, float startT, 
 }
 
 ```
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  3.5. <a name='Alternerdestransitionsdecouleurspleinesetdesanimationspixelparpixel'></a>Alterner des transitions de couleurs pleines et des animations pixel par pixel
 
@@ -1119,7 +1119,7 @@ void chatoiement_color(Adafruit_NeoPixel *strip, int n, float t, float startT, f
 }
 ```
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ##  4. <a name='Brancheretassignerplusieursanneaux'></a>Brancher et assigner plusieurs anneaux
 
@@ -1291,7 +1291,7 @@ float easing(int easeType, uint32_t tt, uint32_t startT, uint32_t endT) {
 
 ``` 
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  4.3. <a name='Troisanneauxalimentationexterne'></a>Trois anneaux : alimentation externe
 
@@ -1304,7 +1304,7 @@ Normalement en vous inspirant du code pour deux anneaux vous devriez réussir à
 Pour dimensionner une alimentation il faut compter qu'une led consomme au maximum 60mA lorsqu'elle est allumée en blanc. Théoriquement si on allume toutes les leds d'un anneau en blanc on consomme donc 0,96 A. Pour deux anneaux 1,92 A et pour 3 anneaux.
 
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 
 ##  5. <a name='LabibliothqueLedAnimation'></a>La bibliothèque LedAnimation
@@ -1323,11 +1323,11 @@ ring1.transition(noir, bleu).from(0).to(2500).ease(SIN_IN_OUT);
 
 L'animation la plus courte possible est donc `ring1.chatoiement();`
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  5.1. <a name='Installationetexemples'></a>Installation et exemples
 
-- installer la bibliothèque *Adafruit NeoPixel* depuis le gestionnaire de bibliothèques (cf. [1.1](#Installationdelabibliothque))
+- installer la bibliothèque *Adafruit NeoPixel* depuis le gestionnaire de bibliothèques (cf. [1.1](#11-installation-de-la-bibliothèque))
 - télécharger ce dépôt en zip : bouton vert *Code* puis *Download ZIP*
 
 - dans arduino, menu *Croquis* -> *Inclure une bibliothèque* -> *Ajouter la bibliothèque .ZIP* et choisir le fichier téléchargé
@@ -1348,12 +1348,12 @@ Les exemples sont alors disponibles dans le menu *Fichier* -> *Exemples* -> *Led
 | [08_deux_anneaux](examples/08_deux_anneaux/08_deux_anneaux.ino) | synchroniser deux anneaux |
 | [09_animation_perso](examples/09_animation_perso/09_animation_perso.ino) | écrire ses propres animations et les rendre réglables |
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  5.2. <a name='Structuredunprogramme'></a>Structure d'un programme
 
 - `#include <LedAnimation.h>` tout en haut
-- vos couleurs : `Vec3 bleu = Vec3(0, 200, 255);` (rouge, vert, bleu entre 0 et 255, cf. [3.1.1](#Unstructurepourstockerlescouleurs))
+- vos couleurs : `Vec3 bleu = Vec3(0, 200, 255);` (rouge, vert, bleu entre 0 et 255, cf. [3.1.1](#311-un-structure-pour-stocker-les-couleurs))
 - `LedRing ring1(16, 6);` : un anneau de 16 leds sur la broche 6. C'est un *Adafruit_NeoPixel* : `ring1.setPixelColor()`, `ring1.ColorHSV()` etc. vus dans les parties 1 et 2 fonctionnent toujours.
 - `ring1.begin();` dans le *setup()*
 - `timeline(5000);` au début du *loop()* : le temps total de l'animation en millisecondes, qui boucle. Cela remplace les variables *totalTime* et *dur*.
@@ -1362,7 +1362,7 @@ Les exemples sont alors disponibles dans le menu *Fichier* -> *Exemples* -> *Led
 
 Pour plusieurs anneaux, on ajoute une ligne `LedRing ring2(16, 9);`, un `ring2.begin();` et un `ring2.show();` : tous les anneaux partagent la même timeline.
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  5.3. <a name='Lesanimations'></a>Les animations
 
@@ -1373,11 +1373,11 @@ Pour plusieurs anneaux, on ajoute une ligne `LedRing ring2(16, 9);`, un `ring2.b
 | `sunrise(couleur1, couleur2)` | passe d'une couleur à une autre led par led, en partant de la led 0 et en faisant le tour de l'anneau des deux côtés à la fois | |
 | `animation_radiale()` | un dégradé de teintes qui tourne | `.hue(100, 235)` `.turns(8)` |
 | `chatoiement()` | luminosité et teinte de chaque led ondulent grâce au noise | `.hue(160, 270)` `.hueTo()` `.speed(1)` |
-| `play(fonction)` | votre propre animation, cf. [5.6](#Ecriresapropreanimation) | tous |
+| `play(fonction)` | votre propre animation, cf. [5.6](#56-ecrire-sa-propre-animation) | tous |
 
 Les valeurs entre parenthèses dans la dernière colonne sont les valeurs par défaut.
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  5.4. <a name='Lesrglages'></a>Les réglages
 
@@ -1388,7 +1388,7 @@ Ces réglages fonctionnent avec toutes les animations :
 | `.from(ms)` | début de l'animation en millisecondes | 0 |
 | `.to(ms)` | fin de l'animation en millisecondes | la fin de la timeline |
 | `.ease(dynamique)` | LIN, SIN_IN_OUT, SIN_IN, SIN_OUT, CIRC_IN_OUT, CIRC_IN, CIRC_OUT, EXPO_IN_OUT, EXPO_IN, EXPO_OUT (cf. https://easings.net/) | LIN |
-| `.leds(...)` | n'utiliser qu'une partie des leds, cf. [5.5](#Choisirlesleds) | toutes |
+| `.leds(...)` | n'utiliser qu'une partie des leds, cf. [5.5](#55-choisir-les-leds) | toutes |
 | `.value(debut, fin)` | la luminosité générale au début et à la fin, entre 0 et 255, pour allumer ou éteindre progressivement n'importe quelle animation | 255, 255 |
 
 Ceux-ci ne sont utilisés que par certaines animations (cf. le tableau précédent) et par les vôtres :
@@ -1414,7 +1414,7 @@ ring1.chatoiement().from(3000).hueTo(0, 60).speed(2);          // puis change de
 
 Entre deux animations, s'il y a un "trou" dans le temps, les leds gardent leur dernière couleur. Si deux animations se jouent en même temps sur les mêmes leds, c'est la dernière écrite dans le programme qui gagne.
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  5.5. <a name='Choisirlesleds'></a>Choisir les leds
 
@@ -1448,7 +1448,7 @@ ring1.chatoiement().hue(160, 270).leds(SECOND_HALF);
 
 Une liste de numéros ne peut contenir que des numéros entre 0 et 255.
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  5.6. <a name='Ecriresapropreanimation'></a>Ecrire sa propre animation
 
@@ -1514,7 +1514,7 @@ ring1.play(clignotement).from(5000).to(7000).colors(blanc, noir).leds(EVEN);
 
 L'exemple [09_animation_perso](examples/09_animation_perso/09_animation_perso.ino) contient ces deux animations et une troisième plus avancée (une comète). Les animations de la bibliothèque sont écrites exactement de cette manière dans la partie 6 du fichier [src/LedAnimation.h](src/LedAnimation.h) : vous pouvez les copier dans votre programme, les renommer et les modifier.
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  5.7. <a name='Lespigesviter'></a>Les pièges à éviter
 
@@ -1524,7 +1524,7 @@ L'exemple [09_animation_perso](examples/09_animation_perso/09_animation_perso.in
 - **Ne mélangez pas avec le code des parties 3 et 4.** Un programme qui contient `#include <LedAnimation.h>` ne doit pas contenir aussi la structure *Vec3*, les variables *LIN*, *SIN_IN* ... ou les anciennes fonctions `transition(LIN, &ring1, NUMPIXELS, ...)` : la compilation échouerait.
 - **`ring1.show()` à la fin du *loop()*** : sans lui rien ne s'allume.
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
 
 ###  5.8. <a name='Diffrencesaveclecodedesparties3et4'></a>Différences avec le code des parties 3 et 4
 
@@ -1544,8 +1544,8 @@ Si vous adaptez un ancien programme :
 Le rendu n'est pas strictement identique :
 
 - le chatoiement n'a plus besoin de la bibliothèque *SimplexNoise* : un noise est inclus. Son dessin est un peu différent, et sa vitesse ne dépend plus de la rapidité de la carte : elle se règle avec `.speed()`.
-- la correction gamma (cf. [1.4](#LemodedecouleurHSB)) est appliquée à toutes les animations, y compris `fixed_color` : une couleur fixe et la fin d'une transition vers cette couleur sont donc identiques.
+- la correction gamma (cf. [1.4](#14-le-mode-de-couleur-hsb)) est appliquée à toutes les animations, y compris `fixed_color` : une couleur fixe et la fin d'une transition vers cette couleur sont donc identiques.
 - pour adoucir les variations très lentes de luminosité, chaque led arrondit sa valeur à un moment différent de ses voisines (*dithering*). Dans une couleur très sombre, deux leds voisines peuvent donc avoir un niveau d'écart ; avec un diffuseur cela ne se voit pas. Pour revenir à l'arrondi habituel, ajoutez `ring1.dithering(false);` dans le `setup()`.
 - une animation est active dès l'instant `.from()` inclus, jusqu'à l'instant `.to()` exclu : deux animations qui se suivent s'enchaînent sans image perdue.
 
-[**^ Home**](#Contenu)
+[**^ Home**](#contenu)
