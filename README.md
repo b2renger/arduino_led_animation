@@ -1390,6 +1390,7 @@ Ces réglages fonctionnent avec toutes les animations :
 | `.ease(dynamique)` | LIN, SIN_IN_OUT, SIN_IN, SIN_OUT, CIRC_IN_OUT, CIRC_IN, CIRC_OUT, EXPO_IN_OUT, EXPO_IN, EXPO_OUT (cf. https://easings.net/) | LIN |
 | `.leds(...)` | n'utiliser qu'une partie des leds, cf. [5.5](#55-choisir-les-leds) | toutes |
 | `.value(debut, fin)` | la luminosité générale au début et à la fin, entre 0 et 255, pour allumer ou éteindre progressivement n'importe quelle animation | 255, 255 |
+| `.dithering(true)` | adoucit les variations très lentes : chaque led change de niveau à un moment différent de ses voisines (cf. [5.7](#57-les-pièges-à-éviter)) | `false` |
 
 Ceux-ci ne sont utilisés que par certaines animations (cf. le tableau précédent) et par les vôtres :
 
@@ -1545,7 +1546,7 @@ Le rendu n'est pas strictement identique :
 
 - le chatoiement n'a plus besoin de la bibliothèque *SimplexNoise* : un noise est inclus. Son dessin est un peu différent, et sa vitesse ne dépend plus de la rapidité de la carte : elle se règle avec `.speed()`.
 - la correction gamma (cf. [1.4](#14-le-mode-de-couleur-hsb)) est appliquée à toutes les animations, y compris `fixed_color` : une couleur fixe et la fin d'une transition vers cette couleur sont donc identiques.
-- pour adoucir les variations très lentes de luminosité, chaque led arrondit sa valeur à un moment différent de ses voisines (*dithering*). Dans une couleur très sombre, deux leds voisines peuvent donc avoir un niveau d'écart ; avec un diffuseur cela ne se voit pas. Pour revenir à l'arrondi habituel, ajoutez `ring1.dithering(false);` dans le `setup()`.
+- une led n'a que 256 niveaux par couleur : dans une variation très lente de luminosité (plusieurs minutes), on voit chaque changement de niveau. Le *dithering* l'adoucit, il est désactivé par défaut : ajoutez `.dithering(true)` à une animation, ou `ring1.dithering(true);` dans le `setup()` pour toutes les animations d'un anneau. Chaque led arrondit alors sa valeur à un moment différent de ses voisines (*dithering*). Dans une couleur très sombre, deux leds voisines peuvent donc avoir un niveau d'écart ; avec un diffuseur cela ne se voit pas.
 - une animation est active dès l'instant `.from()` inclus, jusqu'à l'instant `.to()` exclu : deux animations qui se suivent s'enchaînent sans image perdue.
 
 [**^ Home**](#contenu)

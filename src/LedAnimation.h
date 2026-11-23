@@ -196,11 +196,14 @@ public:
   // on voit chaque changement de niveau. Pour l'adoucir, chaque led arrondit
   // à un moment différent de ses voisines (c'est le "dithering") : les leds
   // ne changent donc pas toutes de niveau en même temps.
-  // ring1.dithering(false) dans le setup() pour revenir à l'arrondi habituel.
-  void dithering(bool actif) {
+  // Dans une couleur très sombre, deux leds voisines peuvent alors avoir un
+  // niveau d'écart : c'est surtout utile derrière un diffuseur.
+  //   ring1.dithering(true);  dans le setup() : pour toutes les animations de cet anneau
+  //   .dithering(true)        sur une animation : seulement pour celle-ci
+  void dithering(bool actif = true) {
     dither = actif;
   }
-  bool dither = true;
+  bool dither = false;
 
   // le temps du noise de cet anneau : il n'avance que quand on l'utilise,
   // un chatoiement reprend donc là où il s'était arrêté
@@ -249,7 +252,7 @@ public:
     if (!selected(i)) return;
     // le seuil d'arrondi de cette led : différent pour chaque led (0, 0.62, 0.23,
     // 0.85 ...) avec le dithering, 0.5 pour toutes sinon
-    float seuil = strip.dither ? (uint8_t)(i * 158u) / 256. : 0.5;
+    float seuil = dither ? (uint8_t)(i * 158u) / 256. : 0.5;
     strip.setPixelColor(i, Adafruit_NeoPixel::Color(ledLevel(color.c1 * dim, seuil), ledLevel(color.c2 * dim, seuil), ledLevel(color.c3 * dim, seuil)));
   }
   // la même chose avec une couleur déjà "emballée" (Color(), ColorHSV() ...)
@@ -347,10 +350,16 @@ public:
     speedK = k;
     return *this;
   }
+  // adoucir les variations très lentes : chaque led arrondit à un moment différent
+  // (par défaut : le choix fait pour l'anneau avec ring1.dithering(), sinon false)
+  Anim &dithering(bool actif = true) {
+    dither = actif;
+    return *this;
+  }
 
   // --- la mécanique ---
   Anim(LedRing &strip, Effect fx)
-    : strip(strip), n(strip.numPixels()), last(strip.numPixels() - 1), fx(fx) {}
+    : strip(strip), n(strip.numPixels()), last(strip.numPixels() - 1), dither(strip.dither), fx(fx) {}
   Anim(Anim &&o)
     : Anim((const Anim &)o) {
     o.fx = 0;
@@ -380,6 +389,7 @@ private:
   int first = 0, last;
   uint8_t list[32];
   float dim = 1;
+  bool dither;
   Effect fx;
 };
 

@@ -1449,6 +1449,7 @@ These settings work with every animation:
 | `.ease(dynamic)` | LIN, SIN_IN_OUT, SIN_IN, SIN_OUT, CIRC_IN_OUT, CIRC_IN, CIRC_OUT, EXPO_IN_OUT, EXPO_IN, EXPO_OUT (see https://easings.net/) | LIN |
 | `.leds(...)` | only use some of the LEDs, see [5.5](#55-choosing-the-leds) | all |
 | `.value(start, end)` | overall brightness at the start and at the end, between 0 and 255, to fade any animation in or out | 255, 255 |
+| `.dithering(true)` | smooths very slow changes: each LED changes level at a different moment from its neighbours (see [5.7](#57-pitfalls-to-avoid)) | `false` |
 
 These are only used by some animations (see the previous table) and by your own:
 
@@ -1604,7 +1605,7 @@ The result is not strictly identical:
 
 - the shimmering no longer needs the *SimplexNoise* library: a noise function is included. Its pattern is slightly different, and its speed no longer depends on how fast the board is: it is set with `.speed()`.
 - gamma correction (see [1.4](#14-hsb-color-mode)) is applied to every animation, including `fixed_color`: a fixed color and the end of a transition towards that color are therefore identical.
-- to smooth very slow brightness changes, each LED rounds its value at a different moment from its neighbours (*dithering*). In a very dark color, two neighbouring LEDs can therefore be one level apart; behind a diffuser this is not visible. To go back to plain rounding, add `ring1.dithering(false);` in `setup()`.
+- an LED only has 256 levels per color: in a very slow brightness change (several minutes), each change of level is visible. *Dithering* smooths it and is off by default: add `.dithering(true)` to an animation, or `ring1.dithering(true);` in `setup()` for every animation of a ring. Each LED then rounds its value at a different moment from its neighbours (*dithering*). In a very dark color, two neighbouring LEDs can therefore be one level apart; behind a diffuser this is not visible.
 - an animation is active from the `.from()` instant included, until the `.to()` instant excluded: two animations that follow each other chain without a lost frame.
 
 [**^ Home**](#contents)
